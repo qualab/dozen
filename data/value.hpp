@@ -3,13 +3,14 @@
 #pragma once
 
 #include <data/lazy.hpp>
+#include <data/api.hpp>
 
 namespace data
 {
     /// Data value which is able to be a cell in query result or value in array of mixing types.
     /// Able to be one of the types: type of NULL, boolean, integer, floating-point, text, array, hash-array, nested data set or nested data unit.
     /// Able to be one of type described by developer using templates.
-    class value
+    class DOZEN_API value
     {
     public:
         /// Lazy initialization, does not create any data but class object

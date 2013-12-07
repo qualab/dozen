@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1386373331 source:d:\dev\qua\dozen\source\value.cpp
+	<data/value.hpp>
+
+1386375407 d:\dev\qua\dozen\\data\value.hpp
+	<data/lazy.hpp>
+	<data/api.hpp>
+
+1386372262 d:\dev\qua\dozen\\data\lazy.hpp
+	<memory>
+
+1386375180 d:\dev\qua\dozen\\data\api.hpp
+

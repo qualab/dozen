@@ -15,3 +15,5 @@
 /*.opensdf
 Debug
 Release
+
+*.suo
