@@ -18,10 +18,7 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-DBUILD_DLL" />
-					<Add option="-DDOZEN_EXPORTS" />
-					<Add option="-DWIN32" />
-					<Add option="-D_DEBUG" />
-					<Add directory="$(ProjectDir)" />
+					<Add directory="$(ProjectDir)../.." />
 				</Compiler>
 				<Linker>
 					<Add library="user32" />
@@ -39,10 +36,7 @@
 					<Add option="-std=c++11" />
 					<Add option="-Wall" />
 					<Add option="-DBUILD_DLL" />
-					<Add option="-DDOZEN_EXPORTS" />
-					<Add option="-DWIN32" />
-					<Add option="-DNDEBUG" />
-					<Add directory="$(ProjectDir)" />
+					<Add directory="$(ProjectDir)../.." />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -50,14 +44,10 @@
 				</Linker>
 			</Target>
 		</Build>
-		<Unit filename="data/api.hpp" />
-		<Unit filename="data/lazy.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="data/value.hpp">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="source/value.cpp" />
+		<Unit filename="../../data/api.hpp" />
+		<Unit filename="../../data/lazy.hpp" />
+		<Unit filename="../../data/value.hpp" />
+		<Unit filename="../../source/value.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
