@@ -1,4 +1,4 @@
-/// @author Vladimir Kerimov
+/// @author Владимир Керимов
 
 #include <data/value.hpp>
 
