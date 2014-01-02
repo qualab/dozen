@@ -13,6 +13,10 @@
   <ItemGroup>
     <ClInclude Include="..\..\data\api.hpp" />
     <ClInclude Include="..\..\data\lazy.hpp" />
+    <ClInclude Include="..\..\data\null.hpp" />
+    <ClInclude Include="..\..\data\scalar.hpp" />
+    <ClInclude Include="..\..\data\text.hpp" />
+    <ClInclude Include="..\..\data\throw.hpp" />
     <ClInclude Include="..\..\data\value.hpp" />
   </ItemGroup>
   <ItemGroup>

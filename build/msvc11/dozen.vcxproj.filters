@@ -18,6 +18,18 @@
     <ClInclude Include="..\..\data\value.hpp">
       <Filter>data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\data\null.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\data\scalar.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\data\text.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\data\throw.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\value.cpp">
