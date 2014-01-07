@@ -32,8 +32,23 @@ namespace data
         /// Check is the reference to the data of T is unique.
         bool is_unique() const;
 
+        /// Check is the reference to the data of T is not unique.
+        bool is_not_unique() const;
+
         /// Get reference count to the data of T.
         int ref_count() const;
+
+        /// Check are two lazy implementations point to the same implementation object
+        bool is_same_as(const lazy& another) const;
+
+        /// Check are two lazy implementations point to the different implementation objects
+        bool is_differrent_from(const lazy& another) const;
+
+        /// Check is the implementation object already created inside lazy implementation
+        bool is_created() const;
+
+        /// Check is the implementation object still not created inside lazy implementation
+        bool is_not_created() const;
 
     private:
         /// To create really lazy data, it should be able to initialize even in const-methods.
@@ -98,6 +113,30 @@ namespace data
     int lazy<impl>::ref_count() const
     {
         return m_shared_impl.use_count();
+    }
+
+    template <class impl>
+    bool lazy<impl>::is_same_as(const lazy<impl>& another) const
+    {
+        return m_shared_impl == another.m_shared_impl;
+    }
+
+    template <class impl>
+    bool lazy<impl>::is_differrent_from(const lazy<impl>& another) const
+    {
+        return !is_same_as(another);
+    }
+
+    template <class impl>
+    bool lazy<impl>::is_created() const
+    {
+        return !is_not_created();
+    }
+
+    template <class impl>
+    bool lazy<impl>::is_not_created() const
+    {
+        return !m_shared_impl;
     }
 
     template <class impl>

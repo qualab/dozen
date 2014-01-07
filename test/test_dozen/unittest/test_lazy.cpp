@@ -35,7 +35,9 @@ BOOST_AUTO_TEST_SUITE(test_dozen)
         BOOST_AUTO_TEST_CASE(test_lazy_create)
         {
             data::lazy<test_impl> lazy_impl;
+            BOOST_CHECK(lazy_impl.is_not_created());
             BOOST_CHECK_EQUAL(0, std::strcmp(lazy_impl->get_message(), test_impl::default_message()));
+            BOOST_CHECK(lazy_impl.is_created());
         }
 
         BOOST_AUTO_TEST_CASE(test_lazy_copy)
@@ -47,6 +49,17 @@ BOOST_AUTO_TEST_SUITE(test_dozen)
 
             data::lazy<test_impl> another_lazy_impl = lazy_impl;
             BOOST_REQUIRE_EQUAL(0, std::strcmp(another_lazy_impl->get_message(), check_me_message));
+
+            BOOST_CHECK_EQUAL(2, lazy_impl.ref_count());
+            BOOST_CHECK_EQUAL(2, another_lazy_impl.ref_count());
+
+            static const char* another_message = "another message";
+
+            BOOST_REQUIRE_NO_THROW(another_lazy_impl->set_message(another_message));
+
+            BOOST_CHECK_EQUAL(0, std::strcmp(another_lazy_impl->get_message(), another_message));
+            BOOST_CHECK_EQUAL(0, std::strcmp(lazy_impl->get_message(), check_me_message));
+
         }
 
     BOOST_AUTO_TEST_SUITE_END() // test_lazy
