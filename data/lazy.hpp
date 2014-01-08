@@ -55,10 +55,10 @@ namespace data
         mutable std::shared_ptr<impl> m_shared_impl;
 
         /// Create data of T if it's still does not exist.
-        bool ensure_created();
+        bool ensure_created() const;
 
         /// Makes copy of data of T which it was referenced to and gets the unique reference to the new copy.
-        bool ensure_unique();
+        bool ensure_unique() const;
     };
 
 // ------------------------------------------------------------------------- //
@@ -110,6 +110,12 @@ namespace data
     }
 
     template <class impl>
+    bool lazy<impl>::is_not_unique() const
+    {
+        return !is_unique();
+    }
+
+    template <class impl>
     int lazy<impl>::ref_count() const
     {
         return m_shared_impl.use_count();
@@ -140,7 +146,7 @@ namespace data
     }
 
     template <class impl>
-    bool lazy<impl>::ensure_created()
+    bool lazy<impl>::ensure_created() const
     {
         if(!m_shared_impl)
         {
@@ -152,7 +158,7 @@ namespace data
     }
 
     template <class impl>
-    bool lazy<impl>::ensure_unique()
+    bool lazy<impl>::ensure_unique() const
     {
         if(!ensure_created() && !is_unique())
         {
