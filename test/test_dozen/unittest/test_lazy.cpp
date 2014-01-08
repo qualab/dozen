@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_SUITE(test_dozen)
 
 // -- continue test --
 
-        BOOST_AUTO_TEST_CASE(test_huge_impl)
+        BOOST_AUTO_TEST_CASE(test_huge_lazy_impl)
         {
             huge first;
             BOOST_CHECK(!first.is_impl_created());
@@ -208,10 +208,92 @@ BOOST_AUTO_TEST_SUITE(test_dozen)
 
             huge third = second;
 
+            BOOST_CHECK_EQUAL(third.get_name(), SECOND_NAME);
+            BOOST_CHECK_EQUAL(second.get_name(), SECOND_NAME);
             BOOST_CHECK(second.is_impl_same_as(third));
             BOOST_CHECK(first.is_impl_unique());
             BOOST_CHECK(!second.is_impl_unique());
             BOOST_CHECK(!third.is_impl_unique());
+            BOOST_CHECK_EQUAL(1, first.ref_impl_count());
+            BOOST_CHECK_EQUAL(2, second.ref_impl_count());
+            BOOST_CHECK_EQUAL(2, third.ref_impl_count());
+
+            first = second;
+
+            BOOST_CHECK(first.is_impl_same_as(second));
+            BOOST_CHECK_EQUAL(first.get_name(), SECOND_NAME);
+            BOOST_CHECK_EQUAL(second.get_name(), SECOND_NAME);
+            BOOST_CHECK_EQUAL(third.get_name(), SECOND_NAME);
+            BOOST_CHECK(third.is_impl_same_as(second));
+            BOOST_CHECK_EQUAL(3, first.ref_impl_count());
+            BOOST_CHECK_EQUAL(3, second.ref_impl_count());
+            BOOST_CHECK_EQUAL(3, third.ref_impl_count());
+
+            static const std::string THIRD_NAME = "third";
+
+            BOOST_REQUIRE_NO_THROW(third.set_name(THIRD_NAME));
+            BOOST_CHECK_EQUAL(third.get_name(), THIRD_NAME);
+            BOOST_CHECK_EQUAL(second.get_name(), SECOND_NAME);
+            BOOST_CHECK_EQUAL(first.get_name(), SECOND_NAME);
+            BOOST_CHECK_EQUAL(2, first.ref_impl_count());
+            BOOST_CHECK_EQUAL(2, second.ref_impl_count());
+            BOOST_CHECK_EQUAL(1, third.ref_impl_count());
+            BOOST_CHECK(!first.is_impl_unique());
+            BOOST_CHECK(!second.is_impl_unique());
+            BOOST_CHECK(third.is_impl_unique());
+
+            BOOST_REQUIRE_NO_THROW(first.set_name(FIRST_NAME));
+            BOOST_CHECK(first.is_impl_unique());
+            BOOST_CHECK(second.is_impl_unique());
+            BOOST_CHECK(third.is_impl_unique());
+            BOOST_CHECK_EQUAL(first.get_name(), FIRST_NAME);
+            BOOST_CHECK_EQUAL(second.get_name(), SECOND_NAME);
+            BOOST_CHECK_EQUAL(third.get_name(), THIRD_NAME);
+            BOOST_CHECK_EQUAL(1, first.ref_impl_count());
+            BOOST_CHECK_EQUAL(1, second.ref_impl_count());
+            BOOST_CHECK_EQUAL(1, third.ref_impl_count());
+
+            first = second = third = huge();
+
+            BOOST_CHECK(first.is_impl_same_as(second));
+            BOOST_CHECK(second.is_impl_same_as(third));
+            BOOST_CHECK(!first.is_impl_created());
+            BOOST_CHECK(!second.is_impl_created());
+            BOOST_CHECK(!third.is_impl_created());
+
+            BOOST_CHECK_EQUAL(first.get_name(), std::string());
+            BOOST_CHECK(first.is_impl_created());
+            BOOST_CHECK(!second.is_impl_created());
+            BOOST_CHECK(!third.is_impl_created());
+            BOOST_CHECK(third.is_impl_same_as(second));
+            BOOST_CHECK(!second.is_impl_same_as(first));
+
+            static const std::string COMMON_NAME = "common";
+
+            BOOST_REQUIRE_NO_THROW(third.set_name(COMMON_NAME));
+            BOOST_CHECK(first.is_impl_created());
+            BOOST_CHECK(!second.is_impl_created());
+            BOOST_CHECK(third.is_impl_created());
+            BOOST_CHECK_EQUAL(first.get_name(), std::string());
+            BOOST_CHECK_EQUAL(second.get_name(), std::string());
+            BOOST_CHECK_EQUAL(third.get_name(), COMMON_NAME);
+            BOOST_CHECK(first.is_impl_created());
+            BOOST_CHECK(second.is_impl_created());
+            BOOST_CHECK(third.is_impl_created());
+            BOOST_CHECK(first.is_impl_unique());
+            BOOST_CHECK(second.is_impl_unique());
+            BOOST_CHECK(third.is_impl_unique());
+
+            first = second = third;
+
+            BOOST_CHECK(third.is_impl_same_as(second));
+            BOOST_CHECK(second.is_impl_same_as(first));
+            BOOST_CHECK_EQUAL(second.get_name(), COMMON_NAME);
+            BOOST_CHECK_EQUAL(first.get_name(), COMMON_NAME);
+            BOOST_CHECK_EQUAL(third.get_name(), COMMON_NAME);
+            BOOST_CHECK_EQUAL(3, second.ref_impl_count());
+            BOOST_CHECK_EQUAL(3, third.ref_impl_count());
+            BOOST_CHECK_EQUAL(3, first.ref_impl_count());
         }
 
     BOOST_AUTO_TEST_SUITE_END() // test_lazy
