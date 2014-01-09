@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1389190197 source:d:\dev\qua\dozen\test\run_test.cpp
+1389255657 source:d:\dev\qua\dozen\test\run_test.cpp
 	<boost/test/unit_test.hpp>
 
 1223886026 d:\dev\boost_1_54_0\boost\test\unit_test.hpp
@@ -2639,4 +2639,12 @@
 	<boost/version.hpp>
 
 1362869705 d:\dev\boost_1_54_0\boost\version.hpp
+
+1389188391 source:d:\dev\qua\dozen\test\test_lazy.cpp
+	<data/lazy.hpp>
+	<boost/test/unit_test.hpp>
+	<string>
+
+1389170077 d:\dev\qua\dozen\data\lazy.hpp
+	<memory>
 
