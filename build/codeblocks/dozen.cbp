@@ -43,6 +43,16 @@
 					<Add library="user32" />
 				</Linker>
 			</Target>
+			<Target title="test_dozen">
+				<Option output="bin/test_dozen/dozen" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/test_dozen/" />
+				<Option object_output="obj/test_dozen/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
 		</Build>
 		<Unit filename="../../data/api.hpp" />
 		<Unit filename="../../data/lazy.hpp" />
