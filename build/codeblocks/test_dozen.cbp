@@ -17,6 +17,10 @@
 					<Add directory="$(boost_1_54)" />
 					<Add directory="../.." />
 				</Compiler>
+				<Linker>
+					<Add library="boost_unit_test_framework-vc120-mt-1_55.lib" />
+					<Add directory="$(boost_1_55)/stage/lib" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/test_dozen" prefix_auto="1" extension_auto="1" />
@@ -31,13 +35,21 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="libboost_prg_exec_monitor-mgw47-mt-1_55.a" />
+					<Add library="libboost_test_exec_monitor-mgw47-mt-1_55.a" />
+					<Add library="libboost_unit_test_framework-mgw47-mt-1_55.a" />
+					<Add directory="$(boost_1_55)/stage/lib" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Linker>
+			<Add library="boost_unit_test_framework-vc120-mt-1_55.lib" />
+		</Linker>
 		<Unit filename="../../test/run_test.cpp" />
 		<Unit filename="../../test/test_lazy.cpp" />
 		<Extensions>
