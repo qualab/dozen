@@ -11,14 +11,16 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="--log_level=test_suite" />
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-g" />
+					<Add option="-DBOOST_THREAD_USE_LIB" />
 					<Add directory="$(boost_1_54)" />
 					<Add directory="../.." />
 				</Compiler>
 				<Linker>
-					<Add library="boost_unit_test_framework-vc120-mt-1_55.lib" />
+					<Add library="boost_unit_test_framework-mgw47-mt-1_55" />
 					<Add directory="$(boost_1_55)/stage/lib" />
 				</Linker>
 			</Target>
@@ -27,6 +29,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="--log_level=test_suite" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
@@ -46,9 +49,10 @@
 			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add option="-DBOOST_THREAD_USE_LIB" />
 		</Compiler>
 		<Linker>
-			<Add library="boost_unit_test_framework-vc120-mt-1_55.lib" />
+			<Add library="boost_unit_test_framework-mgw47-mt-1_55" />
 		</Linker>
 		<Unit filename="../../test/run_test.cpp" />
 		<Unit filename="../../test/test_lazy.cpp" />
