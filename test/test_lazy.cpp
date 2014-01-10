@@ -252,6 +252,15 @@ BOOST_AUTO_TEST_SUITE(test_dozen)
             BOOST_CHECK_EQUAL(1, first.ref_impl_count());
             BOOST_CHECK_EQUAL(1, second.ref_impl_count());
             BOOST_CHECK_EQUAL(1, third.ref_impl_count());
+        }
+
+        BOOST_AUTO_TEST_CASE(test_chain_assignment)
+        {
+            huge first("A"), second("B"), third("C");
+
+            BOOST_CHECK_EQUAL(first.get_name(), "A");
+            BOOST_CHECK_EQUAL(second.get_name(), "B");
+            BOOST_CHECK_EQUAL(third.get_name(), "C");
 
             first = second = third = huge();
 
