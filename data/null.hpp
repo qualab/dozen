@@ -3,23 +3,25 @@
 #pragma once
 
 #include <data/scalar.hpp>
-#include <cstddef>
 
 namespace data
 {
-    typedef std::nullptr_t null_type;
+    /// Constant of null value
+    const auto null = nullptr;
 
-    const null_type null = nullptr;
+    /// Type of null value
+    typedef decltype(nullptr) null_type;
 
-    template<typename T>
+    /// Type allows null as variant of value for any type
+    template <typename value_type>
     class nullable
     {
     public:
-        /// Type of value of which nullable<T> origin from
-        typedef T value_type;
+        /// Access to the type of nullable template
+        typedef value_type value_type;
 
-        /// Size of value (in bytes) of which nullable<T> origin from
-        static const size_t VALUE_SIZE = sizeof(value_type);
+        /// Size of type which is parameter of nullable template
+        static const size_t value_size = sizeof(value_type);
 
         /// Create nullable without value, in another words it equals to null
         nullable();
@@ -27,20 +29,32 @@ namespace data
         /// Clear inplaced value (scalar destructor!)
         ~nullable();
 
-        /// Create nullable with specific value, so it is not null
-        nullable(const value_type& value);
-
         /// Create nullable with value of null
         nullable(null_type);
 
-        /// Copy value of nullable without temporary object magic
-        nullable(const nullable& another);
+        /// Create nullable with specific value, so it is not null
+        nullable(value_type const& value);
 
         /// Copy value of nullable without temporary object magic
-        nullable& operator = (const nullable& another);
+        nullable(value_type&& temporary);
+
+        /// Copy value of nullable without temporary object magic
+        nullable(nullable const& another);
 
         /// Copy value of nullable without temporary object magic
         nullable(nullable&& temporary);
+
+        /// Copy value of nullable without temporary object magic
+        nullable& operator = (null_type);
+
+        /// Copy value of nullable without temporary object magic
+        nullable& operator = (value_type const& another);
+
+        /// Copy value of nullable without temporary object magic
+        nullable& operator = (value_type&& temporary);
+
+        /// Copy value of nullable without temporary object magic
+        nullable& operator = (nullable const& another);
 
         /// Copy value of nullable without temporary object magic
         nullable& operator = (nullable&& temporary);
@@ -51,11 +65,14 @@ namespace data
         /// Access to the constant methods of contained value object (must be not null!)
         const value_type* operator -> () const;
 
-        /// Access to the contained value object (must be not null!)
-        value_type* operator -> ();
+        /// Reference to the contained value if not null, if it is null then exception occurs
+        value_type& operator * ();
 
-        /// Access to the constant contained value object (must be not null!)
-        const value_type* operator -> () const;
+        /// Constant reference to the contained value if not null, if it is null then exception occurs
+        const value_type& operator * () const;
+
+        /// Clear value if exists and set value to null
+        void clear();
 
         /// Check is has no value and this object equals null
         bool is_null() const;
@@ -63,72 +80,165 @@ namespace data
         /// Check is has a value and this object not equals null
         bool is_not_null() const;
 
+        /// Return value if it is exist, if not then exception occurs
+        value_type get_value();
+
+        /// Reference to the contained value if not null, if it is null then exception occurs
+        value_type& get_value_ref();
+
+        /// Constant reference to the contained value if not null, if it is null then exception occurs
+        const value_type& get_value_ref() const;
+
+        /// Constant reference to the contained value if not null, if it is null then exception occurs
+        const value_type& get_value_const_ref() const;
+
     private:
         value_type* m_value;
-        byte m_buffer[VALUE_SIZE];
+        byte m_buffer[value_size];
     };
 
-// -------------------------------------------------------------------------- //
+    // -------------------------------------------------------------------------- //
 
-    template<typename T>
-    nullable<T>::nullable()
+    template<typename value_type>
+    nullable<value_type>::nullable()
         : m_value(null)
     {
     }
 
-    template<typename T>
-    nullable<T>::~nullable()
+    template<typename value_type>
+    nullable<value_type>::~nullable()
     {
-        m_value->~value_type();
+        clear();
+        if (m_value)
+            m_value->~value_type();
     }
 
-    template<typename T>
-    nullable<T>::nullable(const nullable<T>::value_type& value)
+    template<typename value_type>
+    nullable<value_type>::nullable(null_type)
+        : m_value(null)
+    {
+    }
+
+    template<typename value_type>
+    nullable<value_type>::nullable(value_type const& value)
         : m_value(new(m_buffer) value_type(value))
     {
     }
 
-    template<typename T>
-    nullable<T>::nullable(null_type)
-        : m_value(null)
+    template<typename value_type>
+    nullable<value_type>::nullable(value_type&& temporary)
+        : m_value(new(m_buffer) value_type(std::move(temporary)))
     {
     }
 
-    template<typename T>
-    nullable<T>::nullable(const nullable<T>& another)
+    template<typename value_type>
+    nullable<value_type>::nullable(nullable<value_type> const& another)
         : m_value(new(m_buffer) value_type(*another))
     {
     }
 
-    template<typename T>
-    nullable<T>& nullable<T>::nullable(const nullable<T>& another)
+    template<typename value_type>
+    nullable<value_type>::nullable(nullable<value_type>&& temporary)
+        : m_value(new(m_buffer) value_type(std::move(*temporary)))
     {
-        m_value = new(m_buffer) value_type(*another);
+    }
+
+    template<typename value_type>
+    nullable<value_type>& nullable<value_type>::operator = (null_type)
+    {
+        clear();
         return *this;
     }
 
-    template<typename T>
-    nullable<T>::nullable(nullable<T>&& temporary)
-        : m_value(new(m_buffer) value_type(std::move(*temporary))
+    template<typename value_type>
+    nullable<value_type>& nullable<value_type>::operator = (value_type const& another)
     {
-    }
-
-    template<typename T>
-    nullable<T>& nullable<T>::operator = (const nullable<T>& temporary)
-    {
-        m_value = new(m_buffer) value_type(std::move(*temporary));
+        clear();
+        m_value = new(m_buffer) value_type(another);
         return *this;
     }
 
-    template<typename T>
-    nullable<T>::value_type* nullable<T>::operator -> ()
+    template<typename value_type>
+    nullable<value_type>& nullable<value_type>::operator = (value_type&& temporary)
+    {
+        clear();
+        m_value = new(m_buffer) value_type(std::move(temporary));
+        return *this;
+    }
+
+    template<typename value_type>
+    nullable<value_type>& nullable<value_type>::operator = (nullable<value_type> const& another)
+    {
+        return *this = *another;
+    }
+
+    template<typename value_type>
+    nullable<value_type>& nullable<value_type>::operator = (nullable<value_type>&& temporary)
+    {
+        return *this = std::move(*temporary);
+    }
+
+    template<typename value_type>
+    value_type* nullable<value_type>::operator -> ()
     {
         return m_value;
     }
 
-    template<typename T>
-    const nullable<T>::value_type* nullable<T>::operator -> () const
+    template<typename value_type>
+    const value_type* nullable<value_type>::operator -> () const
     {
         return m_value;
+    }
+
+    template<typename value_type>
+    void nullable<value_type>::clear()
+    {
+        if(m_value)
+        {
+            value_type* temporary = m_value;
+            m_value = null;
+            if (temporary)
+                temporary->~value_type();
+        }
+    }
+
+    template<typename value_type>
+    bool nullable<value_type>::is_null() const
+    {
+        return m_value == null;
+    }
+
+    template<typename value_type>
+    bool nullable<value_type>::is_not_null() const
+    {
+        return !is_null();
+    }
+
+    template<typename value_type>
+    value_type nullable<value_type>::get_value()
+    {
+        return get_value_ref();
+    }
+
+    template<typename value_type>
+    value_type& nullable<value_type>::get_value_ref()
+    {
+        if (!m_value)
+            throw 1; // TODO: exception
+        return *m_value;
+    }
+
+    template<typename value_type>
+    const value_type& nullable<value_type>::get_value_ref() const
+    {
+        if (!m_value)
+            throw 1; // TODO: exception
+        return *m_value;
+    }
+
+    template<typename value_type>
+    const value_type& nullable<value_type>::get_value_const_ref() const
+    {
+        return get_value_ref();
     }
 }

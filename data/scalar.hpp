@@ -2,10 +2,8 @@
 
 #pragma once
 
-#include <cstdint>
-
 namespace data
 {
-    typedef uint8_t byte;
-    typedef int8_t sbyte;
+    typedef unsigned char byte;
+    typedef signed char sbyte;
 }
