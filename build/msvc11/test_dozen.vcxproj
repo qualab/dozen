@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\test\run_test.cpp" />
     <ClCompile Include="..\..\test\test_lazy.cpp" />
+    <ClCompile Include="..\..\test\test_null.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E142DF30-6359-4577-88C9-F749300D00D0}</ProjectGuid>

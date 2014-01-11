@@ -56,6 +56,7 @@
 		</Linker>
 		<Unit filename="../../test/run_test.cpp" />
 		<Unit filename="../../test/test_lazy.cpp" />
+		<Unit filename="../../test/test_null.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

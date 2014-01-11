@@ -3,6 +3,7 @@
 #pragma once
 
 #include <data/scalar.hpp>
+#include <utility>
 
 namespace data
 {
@@ -17,11 +18,8 @@ namespace data
     class nullable
     {
     public:
-        /// Access to the type of nullable template
-        typedef value_type value_type;
-
         /// Size of type which is parameter of nullable template
-        static const size_t value_size = sizeof(value_type);
+        static const int value_size = sizeof(value_type);
 
         /// Create nullable without value, in another words it equals to null
         nullable();
@@ -59,10 +57,10 @@ namespace data
         /// Copy value of nullable without temporary object magic
         nullable& operator = (nullable&& temporary);
 
-        /// Access to the methods of contained value object (must be not null!)
+        /// Access to the methods of contained value object, if object is not exist then exception occurs
         value_type* operator -> ();
 
-        /// Access to the constant methods of contained value object (must be not null!)
+        /// Access to the constant methods of contained value object, if object is not exist then exception occurs
         const value_type* operator -> () const;
 
         /// Reference to the contained value if not null, if it is null then exception occurs
@@ -70,6 +68,9 @@ namespace data
 
         /// Constant reference to the contained value if not null, if it is null then exception occurs
         const value_type& operator * () const;
+
+        /// Determine when nullable is "false" and contains null value.
+        bool operator ! () const;
 
         /// Clear value if exists and set value to null
         void clear();
@@ -188,6 +189,24 @@ namespace data
     const value_type* nullable<value_type>::operator -> () const
     {
         return m_value;
+    }
+
+    template <typename value_type>
+    value_type& nullable<value_type>::operator * ()
+    {
+        return get_value_ref();
+    }
+
+    template <typename value_type>
+    value_type const& nullable<value_type>::operator * () const
+    {
+        return get_value_ref();
+    }
+
+    template <typename value_type>
+    bool nullable<value_type>::operator ! () const
+    {
+        return is_null();
     }
 
     template<typename value_type>
