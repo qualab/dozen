@@ -55,6 +55,70 @@ BOOST_AUTO_TEST_SUITE(test_dozen)
             BOOST_CHECK_EQUAL(number.get_value_const_ref(), BIG_INT_NUMBER);
             BOOST_CHECK_EQUAL(number.get_value(), BIG_INT_NUMBER);
             BOOST_CHECK_EQUAL(number.get_value_ref(), BIG_INT_NUMBER);
+
+            static const int ANOTHER_NUMBER = 9001;
+
+            data::nullable<int> another = ANOTHER_NUMBER;
+            BOOST_REQUIRE(another.is_not_null());
+            BOOST_CHECK_EQUAL(another.get_value(), ANOTHER_NUMBER);
+
+            BOOST_REQUIRE_NO_THROW((number = another));
+            BOOST_CHECK_EQUAL(number.get_value_ref(), another.get_value_const_ref());
+            BOOST_CHECK_EQUAL(number.get_value_const_ref(), ANOTHER_NUMBER);
+            BOOST_CHECK_NE(&*number, &*another);
+        }
+
+        class temporary_checker
+        {
+        public:
+            temporary_checker()
+                : m_from_temporary(false) {
+            }
+
+            temporary_checker(temporary_checker const& another)
+                : m_from_temporary(false) {
+            }
+
+            temporary_checker(temporary_checker&& temporary)
+                : m_from_temporary(true) {
+            }
+
+            temporary_checker& operator = (temporary_checker const& another) {
+                m_from_temporary = false;
+                return *this;
+            }
+
+            temporary_checker& operator = (temporary_checker&& temporary) {
+                m_from_temporary = true;
+                return *this;
+            }
+
+            bool is_from_temporary() const {
+                return m_from_temporary;
+            }
+
+            bool is_not_from_temporary() const {
+                return !is_from_temporary();
+            }
+
+        private:
+            bool m_from_temporary;
+        };
+
+        BOOST_AUTO_TEST_CASE(test_nullable_from_temporary)
+        {
+            data::nullable<temporary_checker> first;
+            BOOST_CHECK(first.is_null());
+
+            data::nullable<temporary_checker> second = temporary_checker();
+            BOOST_REQUIRE(second.is_not_null());
+            BOOST_CHECK(second->is_from_temporary());
+
+            temporary_checker some_checker;
+
+            data::nullable<temporary_checker> third = some_checker;
+            BOOST_REQUIRE(third.is_not_null());
+            BOOST_CHECK(third->is_not_from_temporary());
         }
 
     BOOST_AUTO_TEST_SUITE_END() // test_null
