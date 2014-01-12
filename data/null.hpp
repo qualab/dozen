@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <data/object.hpp>
 #include <data/scalar.hpp>
 #include <utility>
 
@@ -15,7 +16,7 @@ namespace data
 
     /// Type allows null as variant of value for any type
     template <typename value_type>
-    class nullable
+    class nullable : public object
     {
     public:
         /// Size of type which is parameter of nullable template
@@ -25,7 +26,7 @@ namespace data
         nullable();
 
         /// Clear inplaced value (scalar destructor!)
-        ~nullable();
+        virtual ~nullable();
 
         /// Create nullable with value of null
         nullable(null_type);
@@ -82,7 +83,7 @@ namespace data
         bool is_not_null() const;
 
         /// Return value if it is exist, if not then exception occurs
-        value_type get_value();
+        value_type get_value() const;
 
         /// Reference to the contained value if not null, if it is null then exception occurs
         value_type& get_value_ref();
@@ -234,7 +235,7 @@ namespace data
     }
 
     template<typename value_type>
-    value_type nullable<value_type>::get_value()
+    value_type nullable<value_type>::get_value() const
     {
         return get_value_ref();
     }

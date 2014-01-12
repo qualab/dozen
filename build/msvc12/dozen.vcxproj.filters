@@ -9,9 +9,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\data\api.hpp">
-      <Filter>data</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\data\lazy.hpp">
       <Filter>data</Filter>
     </ClInclude>
@@ -27,12 +24,21 @@
     <ClInclude Include="..\..\data\text.hpp">
       <Filter>data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\data\throw.hpp">
+    <ClInclude Include="..\..\data\object.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\data\api.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\data\exception.hpp">
       <Filter>data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\value.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\object.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -22,12 +22,14 @@
     <ClInclude Include="..\..\data\api.hpp" />
     <ClInclude Include="..\..\data\lazy.hpp" />
     <ClInclude Include="..\..\data\null.hpp" />
+    <ClInclude Include="..\..\data\object.hpp" />
     <ClInclude Include="..\..\data\scalar.hpp" />
     <ClInclude Include="..\..\data\text.hpp" />
-    <ClInclude Include="..\..\data\throw.hpp" />
+    <ClInclude Include="..\..\data\exception.hpp" />
     <ClInclude Include="..\..\data\value.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\object.cpp" />
     <ClCompile Include="..\..\source\value.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

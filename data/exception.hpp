@@ -3,11 +3,12 @@
 #pragma once
 
 #include <exception>
+#include <data/object.hpp>
 #include <data/lazy.hpp>
 
 namespace data
 {
-    class exception : std::exception
+    class exception : public std::exception, public object
     {
     public:
         enum level
@@ -21,6 +22,8 @@ namespace data
         exception(const char* message, level how, const char* file_from, int line_no);
 
         exception(const wchar_t* message, level how, const char* file_from, int line_no);
+
+        virtual ~exception();
 
         const char* what() const;
 

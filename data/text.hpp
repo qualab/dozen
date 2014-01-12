@@ -2,19 +2,18 @@
 
 #pragma once
 
+#include <data/object.hpp>
 #include <data/lazy.hpp>
 
 namespace data
 {
-    class text
+    class text : public object
     {
     public:
         text();
 
-        text(const char* value);
-        text(const wchar_t* value);
-
-        text
+        text(char const* value);
+        text(wchar_t const* value);
 
     private:
         class impl;
