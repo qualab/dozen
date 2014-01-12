@@ -119,6 +119,12 @@ BOOST_AUTO_TEST_SUITE(test_dozen)
             data::nullable<temporary_checker> third = some_checker;
             BOOST_REQUIRE(third.is_not_null());
             BOOST_CHECK(third->is_not_from_temporary());
+
+            BOOST_REQUIRE_NO_THROW((first = second));
+            BOOST_CHECK(first->is_not_from_temporary());
+
+            BOOST_REQUIRE_NO_THROW((first = std::move(third)));
+            BOOST_CHECK(first->is_from_temporary());
         }
 
     BOOST_AUTO_TEST_SUITE_END() // test_null
