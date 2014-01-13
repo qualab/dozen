@@ -100,7 +100,7 @@ namespace data
     template <typename value_type>
     nullable<value_type> value::get_value_or_null() const
     {
-        return is_null() ? null : get_value();
+        return is_null() ? null : get_value<value_type>();
     }
 
     template<> DOZEN_API bool      value::get_value() const;

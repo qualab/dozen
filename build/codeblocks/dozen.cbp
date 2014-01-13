@@ -55,12 +55,14 @@
 			</Target>
 		</Build>
 		<Unit filename="../../data/api.hpp" />
+		<Unit filename="../../data/exception.hpp" />
 		<Unit filename="../../data/lazy.hpp" />
 		<Unit filename="../../data/null.hpp" />
+		<Unit filename="../../data/object.hpp" />
 		<Unit filename="../../data/scalar.hpp" />
 		<Unit filename="../../data/text.hpp" />
-		<Unit filename="../../data/throw.hpp" />
 		<Unit filename="../../data/value.hpp" />
+		<Unit filename="../../source/object.cpp" />
 		<Unit filename="../../source/value.cpp" />
 		<Extensions>
 			<code_completion />

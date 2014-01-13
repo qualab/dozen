@@ -2645,16 +2645,32 @@
 	<boost/test/unit_test.hpp>
 	<string>
 
-1389170077 d:\dev\qua\dozen\data\lazy.hpp
+1389555942 d:\dev\qua\dozen\data\lazy.hpp
 	<memory>
 
-1389441307 source:d:\dev\qua\dozen\test\test_null.cpp
+1389554364 source:d:\dev\qua\dozen\test\test_null.cpp
 	<data/null.hpp>
 	<boost/test/unit_test.hpp>
 
-1389438586 d:\dev\qua\dozen\data\null.hpp
+1389563118 d:\dev\qua\dozen\data\null.hpp
+	<data/object.hpp>
 	<data/scalar.hpp>
 	<utility>
 
-1389378562 d:\dev\qua\dozen\data\scalar.hpp
+1389555370 d:\dev\qua\dozen\data\scalar.hpp
+
+1389562011 d:\dev\qua\dozen\data\object.hpp
+	<data/api.hpp>
+
+1389562011 d:\dev\qua\dozen\data\api.hpp
+
+1389565229 source:d:\dev\qua\dozen\test\test_value.cpp
+	<data/value.hpp>
+	<boost/test/unit_test.hpp>
+
+1389591450 d:\dev\qua\dozen\data\value.hpp
+	<data/object.hpp>
+	<data/null.hpp>
+	<data/lazy.hpp>
+	<data/api.hpp>
 

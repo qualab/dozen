@@ -21,7 +21,6 @@
 				</Compiler>
 				<Linker>
 					<Add library="boost_unit_test_framework-mgw47-mt-1_55" />
-					<Add directory="$(boost_1_55)/stage/lib" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -41,7 +40,6 @@
 					<Add library="libboost_prg_exec_monitor-mgw47-mt-1_55.a" />
 					<Add library="libboost_test_exec_monitor-mgw47-mt-1_55.a" />
 					<Add library="libboost_unit_test_framework-mgw47-mt-1_55.a" />
-					<Add directory="$(boost_1_55)/stage/lib" />
 				</Linker>
 			</Target>
 		</Build>
@@ -53,10 +51,14 @@
 		</Compiler>
 		<Linker>
 			<Add library="boost_unit_test_framework-mgw47-mt-1_55" />
+			<Add library="dozen" />
+			<Add directory="$(boost_1_55)/stage/lib" />
+			<Add directory="$(TARGET_OUTPUT_DIR)" />
 		</Linker>
 		<Unit filename="../../test/run_test.cpp" />
 		<Unit filename="../../test/test_lazy.cpp" />
 		<Unit filename="../../test/test_null.cpp" />
+		<Unit filename="../../test/test_value.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
