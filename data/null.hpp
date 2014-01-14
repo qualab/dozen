@@ -28,6 +28,9 @@ namespace data
         /// Clear inplaced value (scalar destructor!)
         virtual ~nullable();
 
+        /// Clone this object to new nullable
+        virtual std::unique_ptr<object> clone() const;
+
         /// Create nullable with value of null
         nullable(null_type);
 
@@ -101,13 +104,13 @@ namespace data
 
     // -------------------------------------------------------------------------- //
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>::nullable()
         : m_value(null)
     {
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>::~nullable()
     {
         clear();
@@ -115,44 +118,50 @@ namespace data
             m_value->~value_type();
     }
 
-    template<typename value_type>
+    template <typename value_type>
+    std::unique_ptr<object> nullable<value_type>::clone() const
+    {
+        return std::unique_ptr<object>(new nullable<value_type>(*this));
+    }
+
+    template <typename value_type>
     nullable<value_type>::nullable(null_type)
         : m_value(null)
     {
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>::nullable(value_type const& value)
         : m_value(new(m_buffer) value_type(value))
     {
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>::nullable(value_type&& temporary)
         : m_value(new(m_buffer) value_type(std::move(temporary)))
     {
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>::nullable(nullable<value_type> const& another)
         : m_value(new(m_buffer) value_type(*another))
     {
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>::nullable(nullable<value_type>&& temporary)
         : m_value(new(m_buffer) value_type(std::move(*temporary)))
     {
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>& nullable<value_type>::operator = (null_type)
     {
         clear();
         return *this;
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>& nullable<value_type>::operator = (value_type const& another)
     {
         clear();
@@ -160,7 +169,7 @@ namespace data
         return *this;
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>& nullable<value_type>::operator = (value_type&& temporary)
     {
         clear();
@@ -168,25 +177,25 @@ namespace data
         return *this;
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>& nullable<value_type>::operator = (nullable<value_type> const& another)
     {
         return *this = *another;
     }
 
-    template<typename value_type>
+    template <typename value_type>
     nullable<value_type>& nullable<value_type>::operator = (nullable<value_type>&& temporary)
     {
         return *this = std::move(*temporary);
     }
 
-    template<typename value_type>
+    template <typename value_type>
     value_type* nullable<value_type>::operator -> ()
     {
         return m_value;
     }
 
-    template<typename value_type>
+    template <typename value_type>
     const value_type* nullable<value_type>::operator -> () const
     {
         return m_value;
@@ -210,10 +219,10 @@ namespace data
         return is_null();
     }
 
-    template<typename value_type>
+    template <typename value_type>
     void nullable<value_type>::clear()
     {
-        if(m_value)
+        if (m_value)
         {
             value_type* temporary = m_value;
             m_value = null;
@@ -222,25 +231,25 @@ namespace data
         }
     }
 
-    template<typename value_type>
+    template <typename value_type>
     bool nullable<value_type>::is_null() const
     {
         return m_value == null;
     }
 
-    template<typename value_type>
+    template <typename value_type>
     bool nullable<value_type>::is_not_null() const
     {
         return !is_null();
     }
 
-    template<typename value_type>
+    template <typename value_type>
     value_type nullable<value_type>::get_value() const
     {
         return get_value_ref();
     }
 
-    template<typename value_type>
+    template <typename value_type>
     value_type& nullable<value_type>::get_value_ref()
     {
         if (!m_value)
@@ -248,7 +257,7 @@ namespace data
         return *m_value;
     }
 
-    template<typename value_type>
+    template <typename value_type>
     const value_type& nullable<value_type>::get_value_ref() const
     {
         if (!m_value)
@@ -256,7 +265,7 @@ namespace data
         return *m_value;
     }
 
-    template<typename value_type>
+    template <typename value_type>
     const value_type& nullable<value_type>::get_value_const_ref() const
     {
         return get_value_ref();

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <data/api.hpp>
+#include <memory>
 
 namespace data
 {
@@ -10,5 +11,7 @@ namespace data
     {
     public:
         virtual ~object();
+
+        virtual std::unique_ptr<object> clone() const;
     };
 }

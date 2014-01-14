@@ -2,6 +2,7 @@
 
 #include <data/value.hpp>
 #include <data/null.hpp>
+#include <typeinfo>
 #include <memory>
 
 namespace data
@@ -10,31 +11,34 @@ namespace data
     {
     public:
         impl()
+            : m_kind(of_null)
         {
         }
 
         impl(impl const& another)
+            : m_kind(another.m_kind)
         {
             if (!another.is_null())
-            {//set_value_or_null(*another.m_holder);
-            }//TODO: use overload (same as in visitor)
+            {
+                m_holder = another.m_holder->clone();
+            }
+            else
+            {
+                m_holder.reset();
+            }
         }
 
         void set_value(null_type)
         {
+            m_kind = of_null;
             m_holder.reset(null);
         }
 
         template <typename value_type>
         void set_value(value_type another)
         {
+            m_kind = typename value::kind_of<value_type>::value_kind;
             m_holder.reset(new nullable<value_type>(another));
-        }
-
-        template <typename value_type>
-        void set_value_or_null(nullable<value_type> const& holder)
-        {
-            m_holder.reset(new nullable<value_type>(holder));
         }
 
         template <typename value_type>
@@ -57,6 +61,7 @@ namespace data
         }
 
     private:
+        kind m_kind;
         std::unique_ptr<object> m_holder;
     };
 
@@ -77,32 +82,32 @@ namespace data
         m_impl->set_value(null);
     }
 
-    template<> void value::set_value(bool another)
+    template<> void value::set_value(value::type_of<value::of_bool>::value_type another)
     {
         m_impl->set_value(another);
     }
 
-    template<> void value::set_value(long long another)
+    template<> void value::set_value(value::type_of<value::of_int>::value_type another)
     {
         m_impl->set_value(another);
     }
 
-    template<> void value::set_value(double another)
+    template<> void value::set_value(value::type_of<value::of_float>::value_type another)
     {
         m_impl->set_value(another);
     }
 
-    template<> bool value::get_value() const
+    template<> value::type_of<value::of_bool>::value_type value::get_value() const
     {
         return m_impl->get_value<bool>();
     }
 
-    template<> long long value::get_value() const
+    template<> value::type_of<value::of_int>::value_type value::get_value() const
     {
         return m_impl->get_value<long long>();
     }
 
-    template<> double value::get_value() const
+    template<> value::type_of<value::of_float>::value_type value::get_value() const
     {
         return m_impl->get_value<double>();
     }

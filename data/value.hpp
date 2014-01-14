@@ -2,10 +2,11 @@
 
 #pragma once
 
+#include <data/api.hpp>
 #include <data/object.hpp>
 #include <data/null.hpp>
 #include <data/lazy.hpp>
-#include <data/api.hpp>
+#include <type_traits>
 
 namespace data
 {
@@ -63,6 +64,23 @@ namespace data
         /// Check is value contain false
         bool is_false() const;
 
+        /// Kind of value, enum specifies value type
+        enum kind
+        {
+            of_null     =  0,
+            of_bool     =  1,
+            of_int      =  2,
+            of_float    =  3,
+            of_text     =  4,
+            of_unknown  = -1
+        };
+
+        template <kind of_kind>
+        struct type_of;
+
+        template <typename value_type>
+        struct kind_of;
+
     private:
         /// Class of implementation, data is hidden.
         class impl;
@@ -70,6 +88,16 @@ namespace data
         /// The only data in class with lazy initialization and copy-on-write system
         lazy<impl> m_impl;
     };
+
+    template<> struct value::type_of<value::of_null>  { typedef null_type value_type; };
+    template<> struct value::type_of<value::of_bool>  { typedef bool      value_type; };
+    template<> struct value::type_of<value::of_int>   { typedef long long value_type; };
+    template<> struct value::type_of<value::of_float> { typedef double    value_type; };
+
+    template<> struct value::kind_of<value::type_of<value::of_null >::value_type> { static const kind value_kind = of_null;  };
+    template<> struct value::kind_of<value::type_of<value::of_bool >::value_type> { static const kind value_kind = of_bool;  };
+    template<> struct value::kind_of<value::type_of<value::of_int  >::value_type> { static const kind value_kind = of_int;   };
+    template<> struct value::kind_of<value::type_of<value::of_float>::value_type> { static const kind value_kind = of_float; };
 
     template <typename value_type>
     value::value(nullable<value_type> const& holder)
@@ -83,18 +111,25 @@ namespace data
         set_value(another);
     }
 
-    template<> DOZEN_API void value::set_value(bool      another);
-    template<> DOZEN_API void value::set_value(long long another);
-    template<> DOZEN_API void value::set_value(double    another);
+    template<> DOZEN_API void value::set_value(value::type_of<value::of_bool >::value_type another);
+    template<> DOZEN_API void value::set_value(value::type_of<value::of_int  >::value_type another);
+    template<> DOZEN_API void value::set_value(value::type_of<value::of_float>::value_type another);
 
-    template<> void value::set_value(int another)
+    template <typename value_type>
+    void value::set_value(value_type another)
     {
-        return set_value(static_cast<long long>(another));
-    }
-
-    template<> void value::set_value(float another)
-    {
-        return set_value(static_cast<double>(another));
+        if (std::is_integral<value_type>::value)
+        {
+            set_value(static_cast<value::type_of<value::of_int>::value_type>(another));
+        }
+        else if (std::is_floating_point<value_type>::value)
+        {
+            set_value(static_cast<value::type_of<value::of_float>::value_type>(another));
+        }
+        else
+        {
+            throw 1; // TODO: exception throw
+        }
     }
 
     template <typename value_type>
@@ -103,17 +138,24 @@ namespace data
         return is_null() ? null : get_value<value_type>();
     }
 
-    template<> DOZEN_API bool      value::get_value() const;
-    template<> DOZEN_API long long value::get_value() const;
-    template<> DOZEN_API double    value::get_value() const;
+    template<> DOZEN_API value::type_of<value::of_bool >::value_type value::get_value() const;
+    template<> DOZEN_API value::type_of<value::of_int  >::value_type value::get_value() const;
+    template<> DOZEN_API value::type_of<value::of_float>::value_type value::get_value() const;
 
-    template<> int value::get_value() const
+    template <typename value_type>
+    value_type value::get_value() const
     {
-        return get_value<long long>(); // TODO: safe cast
-    }
-
-    template<> float value::get_value() const
-    {
-        return get_value<double>(); // TODO: safe cast
+        if (std::is_integral<value_type>::value)
+        {
+            return get_value<value::type_of<value::of_int>::value_type>();
+        }
+        else if (std::is_floating_point<value_type>::value)
+        {
+            return get_value<value::type_of<value::of_float>::value_type>();
+        }
+        else
+        {
+            throw 1; // TODO: exception throw
+        }
     }
 }
