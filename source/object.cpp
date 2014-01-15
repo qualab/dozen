@@ -1,3 +1,5 @@
+﻿/// @author Владимир Керимов
+
 #include <data/object.hpp>
 #include <utility>
 

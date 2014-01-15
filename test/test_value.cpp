@@ -1,3 +1,5 @@
+﻿/// @author Владимир Керимов
+
 #include <data/value.hpp>
 #include <boost/test/unit_test.hpp>
 

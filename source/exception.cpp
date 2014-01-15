@@ -1,3 +1,5 @@
+﻿/// @author Владимир Керимов
+
 #include <data/exception.hpp>
 #include <data/text.hpp>
 

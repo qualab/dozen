@@ -1,3 +1,5 @@
+﻿/// @author Владимир Керимов
+
 #include <data/text.hpp>
 #include <data/null.hpp>
 

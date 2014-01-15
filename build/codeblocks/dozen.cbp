@@ -62,7 +62,9 @@
 		<Unit filename="../../data/scalar.hpp" />
 		<Unit filename="../../data/text.hpp" />
 		<Unit filename="../../data/value.hpp" />
+		<Unit filename="../../source/exception.cpp" />
 		<Unit filename="../../source/object.cpp" />
+		<Unit filename="../../source/text.cpp" />
 		<Unit filename="../../source/value.cpp" />
 		<Extensions>
 			<code_completion />
