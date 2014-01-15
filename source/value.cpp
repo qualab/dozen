@@ -104,12 +104,12 @@ namespace data
 
     template<> value::type_of<value::of_int>::value_type value::get_value() const
     {
-        return m_impl->get_value<value::type_of<value::of_bool>::value_type>();
+        return m_impl->get_value<value::type_of<value::of_int>::value_type>();
     }
 
     template<> value::type_of<value::of_float>::value_type value::get_value() const
     {
-        return m_impl->get_value<value::type_of<value::of_bool>::value_type>();
+        return m_impl->get_value<value::type_of<value::of_float>::value_type>();
     }
 
     bool value::is_null() const
