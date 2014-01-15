@@ -7,7 +7,7 @@
 namespace data
 {
     /// Lazy copy (on write) and lazy creation (on demand) of data of type uses as template attribute.
-    /// @details This class designed for internal implementation wrapping and dont need to be inherited from object.
+    /// @details This class designed for internal implementation wrapping and dont need to be inherited from class object.
     template <class impl>
     class lazy      
     {

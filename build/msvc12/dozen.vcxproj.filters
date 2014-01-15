@@ -27,10 +27,10 @@
     <ClInclude Include="..\..\data\object.hpp">
       <Filter>data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\data\api.hpp">
+    <ClInclude Include="..\..\data\exception.hpp">
       <Filter>data</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\data\exception.hpp">
+    <ClInclude Include="..\..\data\api.hpp">
       <Filter>data</Filter>
     </ClInclude>
   </ItemGroup>
@@ -39,6 +39,12 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\object.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\exception.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\text.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>

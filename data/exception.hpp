@@ -2,32 +2,29 @@
 
 #pragma once
 
+#include <data/text.hpp>
 #include <exception>
-#include <data/object.hpp>
-#include <data/lazy.hpp>
+
+#define DOZEN_THROW(exception, message) throw exception(message, __FILE__, __LINE__)
 
 namespace data
 {
-    class exception : public std::exception, public object
+    class DOZEN_API exception : public std::exception, public object
     {
     public:
-        enum level
-        {
-            AS_ERROR,
-            AS_WARNING,
-            AS_INFO,
-            AS_DEBUG
-        };
+        exception();
 
-        exception(const char* message, level how, const char* file_from, int line_no);
+        virtual ~exception() override;
 
-        exception(const wchar_t* message, level how, const char* file_from, int line_no);
+        exception(char const* message, char const* file, int line);
 
-        virtual ~exception();
+        exception(wchar_t const* message, char const* file, int line);
 
-        const char* what() const;
+        exception(text const& message, char const* file, int line);
 
-        const wchar_t* message() const;
+        virtual char const* what() const override;
+
+        virtual std::unique_ptr<object> clone() const override;
 
     private:
         class impl;
@@ -35,11 +32,3 @@ namespace data
         lazy<impl> m_impl;
     };
 }
-
-#define DOZEN_THROW_ERROR(exception_class, error_message) throw exception_class(error_message, exception::IS_ERROR, __FILE__, __LINE__)
-
-#define DOZEN_THROW_INFO(exception_class, info_message) throw exception_class(info_message, exception::IS_INFO, __FILE__, __LINE__)
-
-#define DOZEN_THROW_WARNING(exception_class, warning_message) throw exception_class(warning_message, exception::IS_WARNING, __FILE__, __LINE__)
-
-#define DOZEN_THROW_DEBUG(exception_class, debug_message) throw exception_class(debug_message, exception::IS_DEBUG, __FILE__, __LINE__)

@@ -19,6 +19,9 @@ namespace data
         /// Lazy initialization, does not create any data but class object
         value();
 
+        /// Trivial destructor of data object
+        virtual ~value();
+
         /// Initialize value as null, same as default constructor
         value(null_type);
 
@@ -29,9 +32,6 @@ namespace data
         /// Initialize value by another of specified type
         template <typename value_type>
         value(value_type another);
-
-        /// Trivial destructor of data object
-        virtual ~value();
 
         /// Set value as null
         void set_value(null_type);
