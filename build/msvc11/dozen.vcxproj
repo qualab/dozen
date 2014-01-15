@@ -29,7 +29,9 @@
     <ClInclude Include="..\..\data\value.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\exception.cpp" />
     <ClCompile Include="..\..\source\object.cpp" />
+    <ClCompile Include="..\..\source\text.cpp" />
     <ClCompile Include="..\..\source\value.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
