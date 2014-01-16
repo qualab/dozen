@@ -22,6 +22,7 @@
     <ClCompile Include="..\..\test\run_test.cpp" />
     <ClCompile Include="..\..\test\test_lazy.cpp" />
     <ClCompile Include="..\..\test\test_null.cpp" />
+    <ClCompile Include="..\..\test\test_text.cpp" />
     <ClCompile Include="..\..\test\test_value.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

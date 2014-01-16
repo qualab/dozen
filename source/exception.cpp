@@ -66,7 +66,7 @@ namespace data
 
     char const* exception::what() const
     {
-        return m_impl->get_message().get_ansi_string_ptr();
+        return m_impl->get_message().get_byte_string_ptr();
     }
 
     std::unique_ptr<object> exception::clone() const

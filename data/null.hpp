@@ -76,6 +76,12 @@ namespace data
         /// Determine when nullable is "false" and contains null value.
         bool operator ! () const;
 
+        /// Check is two nullable contains equal values or both are null
+        bool operator == (nullable const& another) const;
+
+        /// Check is two nullable contains different values or one of them is null
+        bool operator != (nullable const& another) const;
+
         /// Clear value if exists and set value to null
         void clear();
 
@@ -217,6 +223,19 @@ namespace data
     bool nullable<value_type>::operator ! () const
     {
         return is_null();
+    }
+
+    template <typename value_type>
+    bool nullable<value_type>::operator == (nullable<value_type> const& another) const
+    {
+        return (is_null() && another.is_null()) || 
+            (is_not_null() && another.is_not_null() && get_value_ref() == another.get_value_ref());
+    }
+
+    template <typename value_type>
+    bool nullable<value_type>::operator != (nullable<value_type> const& another) const
+    {
+        return !(*this == another);
     }
 
     template <typename value_type>

@@ -3,6 +3,18 @@
 #include <data/text.hpp>
 #include <data/null.hpp>
 
+#if defined(DOZEN_USES_ICU)
+#include <unicode/unistr.h>
+#elif defined(DOZEN_USES_ICONV)
+#include <iconv.h>
+#else
+#error Choose Unicode encoder: DOZEN_USES_ICU to use libicu or DOZEN_USES_ICONV to use libiconv
+#endif
+
+#ifdef _MSC_VER
+#define DOZEN_WCHAR_SIZE 2
+#endif
+
 namespace data
 {
     class text::impl
@@ -11,104 +23,132 @@ namespace data
         impl();
 
         impl(wchar_t const* wide_string);
-        impl(char    const* ansi_string);
+        impl(char const* byte_string);
+        impl(char const* byte_string, char const* encoding);
 
-        impl(std::wstring const& wide_string);
-        impl(std::string  const& ansi_string);
+        std::wstring get_wide_string() const;
+        std::string const& get_byte_string_ref(char const* encoding) const;
 
-        std::wstring const& get_wide_string_ref() const;
-        std::string  const& get_ansi_string_ref() const;
-
-        int get_symbol_at(int index) const;
         int get_length() const;
+        int get_symbol_at(int index) const;
 
     private:
-        mutable nullable<std::wstring> m_wide_string;
-        mutable nullable<std::string>  m_ansi_string;
+#if defined(DOZEN_USES_ICU) && DOZEN_WCHAR_SIZE > 1
+        mutable nullable<icu::UnicodeString> m_unicode_string;
+#endif
+        mutable nullable<std::string> m_byte_string;
+        mutable nullable<std::string> m_encoding;
+
+        void ensure_unicode_string_exists() const;
+        void ensure_byte_string_match(char const* encoding) const;
     };
 
     text::impl::impl()
     {
     }
 
-    text::impl::impl(char const* ansi_string)
-        : m_ansi_string(ansi_string)
-    {
-    }
-
     text::impl::impl(wchar_t const* wide_string)
-        : m_wide_string(wide_string)
+        : m_unicode_string(wide_string)
     {
     }
 
-    text::impl::impl(std::string const& ansi_string)
-        : m_ansi_string(ansi_string)
+    text::impl::impl(char const* byte_string)
+        : m_byte_string(byte_string)
     {
     }
 
-    text::impl::impl(std::wstring const& wide_string)
-        : m_wide_string(wide_string)
+    text::impl::impl(char const* byte_string, char const* encoding)
+        : m_byte_string(byte_string), m_encoding(encoding)
     {
     }
 
-    std::wstring const& text::impl::get_wide_string_ref() const
+    void text::impl::ensure_unicode_string_exists() const
     {
-        if (!m_wide_string)
+#if DOZEN_WCHAR_SIZE == 1
+        ensure_byte_string_exists();
+#endif
+        if (m_unicode_string.is_null())
         {
-            if (!m_ansi_string)
+            if (m_byte_string.is_null() || m_byte_string->empty())
             {
-                m_wide_string = std::wstring();
+                m_unicode_string = icu::UnicodeString();
             }
             else
             {
-                // TODO: use libicu or libiconv
-                m_wide_string = std::wstring(m_ansi_string->size(), L'\0');
-                auto count = std::mbstowcs(&m_wide_string->at(0), m_ansi_string->c_str(), m_wide_string->size());
-                m_wide_string->resize(count);
+                if (m_encoding.is_null())
+                {
+                    m_unicode_string = icu::UnicodeString(m_byte_string->c_str());
+                }
+                else
+                {
+                    m_unicode_string = icu::UnicodeString(m_byte_string->c_str(), m_encoding->c_str());
+                }
             }
         }
-        return *m_wide_string;
     }
 
-    std::string const& text::impl::get_ansi_string_ref() const
+    void text::impl::ensure_byte_string_match(char const* encoding) const
     {
-        if (!m_ansi_string)
+        if (m_byte_string.is_null() || m_encoding != nullable<std::string>(encoding))
         {
-            if (!m_wide_string)
+            m_encoding = encoding;
+            m_byte_string = std::string();
+            if (m_unicode_string.is_not_null())
             {
-                m_ansi_string = std::string();
-            }
-            else
-            {
-                // TODO: use libicu or libiconv
-                m_ansi_string = std::string(m_wide_string->size(), '\0');
-                auto count = std::wcstombs(&m_ansi_string->at(0), m_wide_string->c_str(), m_ansi_string->size());
-                m_ansi_string->resize(count);
+                m_byte_string->resize(4 * m_byte_string->size());
+                int len = m_unicode_string->extract(0, get_length(), &m_byte_string->at(0));
+                m_byte_string->resize(len);
             }
         }
-        return *m_ansi_string;
+    }
+
+    std::wstring text::impl::get_wide_string() const
+    {
+#if   DOZEN_WCHAR_SIZE == 1
+        static_assert(sizeof(wchar_t) == 1, "Macro defined as sizeof(wchar_t) == 1, but this condition is false!");
+        return get_byte_string();
+#elif DOZEN_WCHAR_SIZE == 2
+        static_assert(sizeof(wchar_t) == 2, "Macro defined as sizeof(wchar_t) == 2, but this condition is false!");
+        return std::wstring(m_unicode_string->getBuffer());
+#elif DOZEN_WCHAR_SIZE == 4
+        static_assert(sizeof(wchar_t) == 4, "Macro defined as sizeof(wchar_t) == 4, but this condition is false!");
+        return std::wstring(m_unicode_string->toUTF32());
+#else
+#       error Unexpected size of wchar_t, out of 1, 2, 4 bytes variants
+#endif
+    }
+
+    std::string const& text::impl::get_byte_string_ref(char const* encoding) const
+    {
+#if DOZEN_WCHAR_SIZE == 1
+        static_assert(sizeof(wchar_t) == 1, "Macro defined as sizeof(wchar_t) == 1, but this condition is false!");
+        return std::string(); // TODO: encode to specific encoding
+#endif
+        ensure_byte_string_match(encoding);
+        return m_byte_string.get_value_ref();
     }
 
     int text::impl::get_length() const
     {
-        return get_wide_string_ref().size();
+        return m_unicode_string->length();
     }
 
     int text::impl::get_symbol_at(int index) const
     {
+        ensure_unicode_string_exists();
         if (index >= 0)
         {
             if (index >= get_length())
                 throw 1; // TODO: exception "out of range"
             else
-                return get_wide_string_ref().at(index);
+                return m_unicode_string->char32At(index);
         }
         else
         {
             if (index < get_length())
                 throw 1; // TODO: exception "out of range"
             else
-                return get_wide_string_ref().at(get_length() - index);
+                return m_unicode_string->char32At(get_length() - index);
         }
     }
 
@@ -120,49 +160,79 @@ namespace data
     {
     }
 
-    text::text(char const* ansi_string)
-        : m_impl(new impl(ansi_string))
-    {
-    }
-
     text::text(wchar_t const* wide_string)
         : m_impl(new impl(wide_string))
     {
     }
 
-    text::text(std::string const& ansi_string)
-        : m_impl(new impl(ansi_string))
+    text::text(char const* byte_string)
+        : m_impl(new impl(byte_string, null))
+    {
+    }
+
+    text::text(char const* byte_string, char const* encoding)
+        : m_impl(new impl(byte_string, encoding))
     {
     }
 
     text::text(std::wstring const& wide_string)
-        : m_impl(new impl(wide_string))
+        : m_impl(new impl(wide_string.c_str()))
     {
     }
 
-    std::string text::get_ansi_string() const
+    text::text(std::string const& ansi_string)
+        : m_impl(new impl(ansi_string.c_str(), null))
     {
-        return m_impl->get_ansi_string_ref();
+    }
+
+    text::text(std::string const& ansi_string, char const* encoding)
+        : m_impl(new impl(ansi_string.c_str(), encoding))
+    {
+    }
+
+    text::text(std::string const& ansi_string, std::string const& encoding)
+        : m_impl(new impl(ansi_string.c_str(), encoding.c_str()))
+    {
     }
 
     std::wstring text::get_wide_string() const
     {
-        return m_impl->get_wide_string_ref();
+        return m_impl->get_wide_string();
     }
 
-    char const* text::get_ansi_string_ptr() const
+    std::string text::get_byte_string() const
     {
-        return m_impl->get_ansi_string_ref().c_str();
+        return m_impl->get_byte_string_ref(null);
     }
 
-    wchar_t const* text::get_wide_string_ptr() const
+    std::string text::get_byte_string(char const* encoding) const
     {
-        return m_impl->get_wide_string_ref().c_str();
+        return m_impl->get_byte_string_ref(encoding);
     }
 
-    int text::operator [] (int index) const
+    std::string text::get_byte_string(std::string const& encoding) const
     {
-        return m_impl->get_symbol_at(index);
+        return m_impl->get_byte_string_ref(encoding.c_str());
+    }
+
+    char const* text::get_byte_string_ptr() const
+    {
+        return m_impl->get_byte_string_ref(null).c_str();
+    }
+
+    char const* text::get_byte_string_ptr(char const* encoding) const
+    {
+        return m_impl->get_byte_string_ref(encoding).c_str();
+    }
+
+    char const* text::get_byte_string_ptr(std::string const& encoding) const
+    {
+        return m_impl->get_byte_string_ref(encoding.c_str()).c_str();
+    }
+
+    int text::get_length() const
+    {
+        return m_impl->get_length();
     }
 
     int text::get_symbol_at(int index) const
@@ -170,8 +240,8 @@ namespace data
         return m_impl->get_symbol_at(index);
     }
 
-    int text::get_length() const
+    int text::operator [] (int index) const
     {
-        return m_impl->get_length();
+        return m_impl->get_symbol_at(index);
     }
 }
