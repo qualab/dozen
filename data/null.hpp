@@ -192,7 +192,11 @@ namespace data
     template <typename value_type>
     nullable<value_type>& nullable<value_type>::operator = (nullable<value_type>&& temporary)
     {
-        return *this = std::move(*temporary);
+        if (temporary.is_null())
+            *this = null;
+        else
+            *this = std::move(*temporary);
+        return *this;
     }
 
     template <typename value_type>
