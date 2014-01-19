@@ -35,54 +35,86 @@ namespace data
         std::string const& get_encoding_string_ref() const;
 
 #ifdef DOZEN_NEED_UNICODE_STRING
-        icu::UnicodeString const get_unicode_string_ref() const;
+        icu::UnicodeString const& get_unicode_string_ref() const;
 #endif
 
         int get_length() const;
         int get_symbol_at(int index) const;
 
     private:
-        mutable nullable<std::wstring> m_wide_string;
         mutable nullable<std::string> m_byte_string;
         mutable nullable<std::string> m_encoding;
+
+        void ensure_byte_string_match(char const* encoding) const;
+
+#if DOZEN_WCHAR_SIZE > 1
+        mutable nullable<std::wstring> m_wide_string;
+
+        void ensure_wide_string_exists() const;
+#endif
 
 #ifdef DOZEN_NEED_UNICODE_STRING
         mutable nullable<icu::UnicodeString> m_unicode_string;
 
         void ensure_unicode_string_exists() const;
 #endif
-
-        void ensure_wide_string_exists() const;
-        void ensure_byte_string_match(char const* encoding) const;
     };
+
+    template <typename char_type>
+    struct string_of;
+
+    template<> struct string_of<wchar_t> { typedef std::wstring type; };
+    template<> struct string_of<char>    { typedef std::string  type; };
+
+    template <typename char_type>
+    nullable<typename string_of<char_type>::type> ptr_to_nullable(char_type const* argument)
+    {
+        return argument ? nullable<typename string_of<char_type>::type>(argument)
+                        : nullable<typename string_of<char_type>::type>(null);
+    }
 
     text::impl::impl()
     {
     }
 
     text::impl::impl(wchar_t const* wide_string)
-        : m_unicode_string(wide_string)
+        : m_wide_string(ptr_to_nullable(wide_string))
     {
     }
 
     text::impl::impl(char const* byte_string)
-        : m_byte_string(byte_string)
+        : m_byte_string(ptr_to_nullable(byte_string))
     {
     }
 
     text::impl::impl(char const* byte_string, char const* encoding)
-        : m_byte_string(byte_string), m_encoding(encoding ? nullable<std::string>(encoding) : nullable<std::string>(null))
+        : m_byte_string(ptr_to_nullable(byte_string)), m_encoding(ptr_to_nullable(encoding))
     {
     }
 
+#ifdef DOZEN_NEED_UNICODE_STRING
     void text::impl::ensure_unicode_string_exists() const
     {
-#if DOZEN_WCHAR_SIZE == 1
-        return ensure_byte_string_exists();
-#endif
         if (m_unicode_string.is_null())
         {
-            if (m_byte_string.is_null() || m_byte_string->empty())
+            if (m_wide_string.is_not_null())
+            {
+                if (m_wide_string->empty())
+                    m_unicode_string = icu::UnicodeString();
+                else
+                {
+#   if DOZEN_WCHAR_SIZE == 2
+                    static_assert(sizeof(wchar_t) == 2, "Macro defined as sizeof(wchar_t) == 2, but this condition is false!");
+                    m_unicode_string = icu::UnicodeString(m_wide_string->c_str(), m_wide_string->length());
+#   elif DOZEN_WCHAR_SIZE == 4
+                    static_assert(sizeof(wchar_t) == 4, "Macro defined as sizeof(wchar_t) == 4, but this condition is false!");
+                    m_unicode_string = icu::UnicodeString::fromUTF32(m_wide_string->c_str(), m_wide_string->length());
+#   else
+#                   error Unexpected sizeof(wchar_t) for translate wide string to Unicode
+#   endif
+                }
+            }
+            else if (m_byte_string.is_null() || m_byte_string->empty())
             {
                 m_unicode_string = icu::UnicodeString();
             }
@@ -99,26 +131,22 @@ namespace data
             }
         }
     }
+#endif
 
     void text::impl::ensure_wide_string_exists() const
     {
-#if   DOZEN_WCHAR_SIZE == 1
-        static_assert(sizeof(wchar_t) == 1, "Macro defined as sizeof(wchar_t) == 1, but this condition is false!");
-        return get_byte_string_ref();
+#if DOZEN_USES_ICU
+        ensure_unicode_string_exists();
+#   if DOZEN_WCHAR_SIZE == 2
+        static_assert(sizeof(wchar_t) == 2, "Macro defined as sizeof(wchar_t) == 2, but this condition is false!");
+        m_wide_string = std::wstring(m_unicode_string->getBuffer(), m_unicode_string->length());
+#   elif DOZEN_WCHAR_SIZE == 4
+        static_assert(sizeof(wchar_t) == 4, "Macro defined as sizeof(wchar_t) == 4, but this condition is false!");
+        m_wide_string = std::wstring(m_unicode_string->toUTF32(), m_unicode_string->length());
+#   else
+#       error Unexpected size of wchar_t; not one of follows: 1, 2, 4 bytes.
+#   endif
 #endif
-        if (m_wide_string.is_null())
-        {
-            ensure_unicode_string_exists();
-#if DOZEN_WCHAR_SIZE == 2
-            static_assert(sizeof(wchar_t) == 2, "Macro defined as sizeof(wchar_t) == 2, but this condition is false!");
-            m_wide_string = std::wstring(m_unicode_string->getBuffer(), m_unicode_string->length());
-#elif DOZEN_WCHAR_SIZE == 4
-            static_assert(sizeof(wchar_t) == 4, "Macro defined as sizeof(wchar_t) == 4, but this condition is false!");
-            m_wide_string = std::wstring(m_unicode_string->toUTF32(), m_unicode_string->length());
-#else
-#           error Unexpected size of wchar_t; not one of follows: 1, 2, 4 bytes.
-#endif
-        }
     }
 
     void text::impl::ensure_byte_string_match(char const* encoding) const
@@ -127,8 +155,9 @@ namespace data
         {
             m_encoding = encoding ? nullable<std::string>(encoding) : nullable<std::string>(null);
             m_byte_string = std::string();
-            if (m_unicode_string.is_not_null())
+            if (m_unicode_string.is_not_null() || m_wide_string.is_not_null())
             {
+                ensure_unicode_string_exists();
                 m_byte_string->resize(4 * m_unicode_string->length());
                 int len = m_unicode_string->extract(0, get_length(), &m_byte_string->at(0));
                 m_byte_string->resize(len);
@@ -142,27 +171,24 @@ namespace data
         static_assert(sizeof(wchar_t) == 1, "Macro defined as sizeof(wchar_t) == 1, but this condition is false!");
         return get_byte_string_ref();
 #endif
-        if (m_wide_string.is_not_null())
+        if (m_wide_string.is_null())
         {
-        }
+            ensure_unicode_string_exists();
 #if DOZEN_WCHAR_SIZE == 2
-        static_assert(sizeof(wchar_t) == 2, "Macro defined as sizeof(wchar_t) == 2, but this condition is false!");
-        m_wide_string = std::wstring(m_unicode_string->getBuffer(), m_unicode_string->length());
+            static_assert(sizeof(wchar_t) == 2, "Macro defined as sizeof(wchar_t) == 2, but this condition is false!");
+            m_wide_string = std::wstring(m_unicode_string->getBuffer(), m_unicode_string->length());
 #elif DOZEN_WCHAR_SIZE == 4
-        static_assert(sizeof(wchar_t) == 4, "Macro defined as sizeof(wchar_t) == 4, but this condition is false!");
-        m_wide_string = std::wstring(m_unicode_string->toUTF32());
+            static_assert(sizeof(wchar_t) == 4, "Macro defined as sizeof(wchar_t) == 4, but this condition is false!");
+            m_wide_string = std::wstring(m_unicode_string->toUTF32());
 #else
 #       error Unexpected size of wchar_t; not one of follows: 1, 2, 4 bytes.
 #endif
+        }
         return m_wide_string.get_value_ref();
     }
 
     std::string const& text::impl::get_byte_string_ref(char const* encoding) const
     {
-#if DOZEN_WCHAR_SIZE == 1
-        static_assert(sizeof(wchar_t) == 1, "Macro defined as sizeof(wchar_t) == 1, but this condition is false!");
-        return std::string(); // TODO: encode to specific encoding
-#endif
         ensure_byte_string_match(encoding);
         return m_byte_string.get_value_ref();
     }
@@ -190,6 +216,8 @@ namespace data
                 return m_unicode_string->char32At(get_length() - index);
         }
     }
+
+//  text -------------------------------------------------------------------------
 
     text::text()
     {
