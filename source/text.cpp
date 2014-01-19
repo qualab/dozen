@@ -147,14 +147,14 @@ namespace data
         }
 #if DOZEN_WCHAR_SIZE == 2
         static_assert(sizeof(wchar_t) == 2, "Macro defined as sizeof(wchar_t) == 2, but this condition is false!");
-        m_wide_string
-        return std::wstring(m_unicode_string->getBuffer(), m_unicode_string->length());
+        m_wide_string = std::wstring(m_unicode_string->getBuffer(), m_unicode_string->length());
 #elif DOZEN_WCHAR_SIZE == 4
         static_assert(sizeof(wchar_t) == 4, "Macro defined as sizeof(wchar_t) == 4, but this condition is false!");
-        return std::wstring(m_unicode_string->toUTF32());
+        m_wide_string = std::wstring(m_unicode_string->toUTF32());
 #else
 #       error Unexpected size of wchar_t; not one of follows: 1, 2, 4 bytes.
 #endif
+        return m_wide_string.get_value_ref();
     }
 
     std::string const& text::impl::get_byte_string_ref(char const* encoding) const
@@ -178,14 +178,14 @@ namespace data
         if (index >= 0)
         {
             if (index >= get_length())
-                throw 1; // TODO: exception "out of range"
+                DOZEN_THROW(out_of_range, "Index of symbol in text is positive and out of range [0..length).");
             else
                 return m_unicode_string->char32At(index);
         }
         else
         {
             if (index < get_length())
-                throw 1; // TODO: exception "out of range"
+                DOZEN_THROW(out_of_range, "Index of symbol in text is negatitive and out of range [-length..0).");
             else
                 return m_unicode_string->char32At(get_length() - index);
         }
@@ -236,7 +236,7 @@ namespace data
 
     std::wstring text::get_wide_string() const
     {
-        return m_impl->get_wide_string();
+        return m_impl->get_wide_string_ref();
     }
 
     std::string text::get_byte_string() const

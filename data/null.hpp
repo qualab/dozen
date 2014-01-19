@@ -4,6 +4,7 @@
 
 #include <data/object.hpp>
 #include <data/scalar.hpp>
+#include <data/exception.hpp>
 #include <utility>
 
 namespace data
@@ -276,7 +277,7 @@ namespace data
     value_type& nullable<value_type>::get_value_ref()
     {
         if (!m_value)
-            throw 1; // TODO: exception
+            DOZEN_THROW(null_is_not_value, "Method nullable::get_value_ref() is trying to reference to the unexistent value which is null");
         return *m_value;
     }
 
@@ -284,7 +285,7 @@ namespace data
     const value_type& nullable<value_type>::get_value_ref() const
     {
         if (!m_value)
-            throw 1; // TODO: exception
+            DOZEN_THROW(null_is_not_value, "Method nullable::get_value_ref() [const] is trying to reference to the unexistent value which is null");
         return *m_value;
     }
 

@@ -2,10 +2,7 @@
 
 #pragma once
 
-#include <data/api.hpp>
-#include <data/object.hpp>
 #include <data/null.hpp>
-#include <data/lazy.hpp>
 #include <type_traits>
 
 namespace data
@@ -128,7 +125,7 @@ namespace data
         }
         else
         {
-            throw 1; // TODO: exception throw
+            DOZEN_THROW(unexpected_value_type, "Unexpected type of value is received in value::set_value()");
         }
     }
 
@@ -155,7 +152,7 @@ namespace data
         }
         else
         {
-            throw 1; // TODO: exception throw
+            DOZEN_THROW(unexpected_value_type, "Unexpected type of value is retrieved in value::get_value()");
         }
     }
 }
