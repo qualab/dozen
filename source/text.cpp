@@ -151,9 +151,9 @@ namespace data
 
     void text::impl::ensure_byte_string_match(char const* encoding) const
     {
-        if (m_byte_string.is_null() || m_encoding != nullable<std::string>(encoding))
+        if (m_byte_string.is_null() || m_encoding != ptr_to_nullable(encoding))
         {
-            m_encoding = encoding ? nullable<std::string>(encoding) : nullable<std::string>(null);
+            m_encoding = ptr_to_nullable(encoding);
             m_byte_string = std::string();
             if (m_unicode_string.is_not_null() || m_wide_string.is_not_null())
             {

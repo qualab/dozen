@@ -121,8 +121,6 @@ namespace data
     nullable<value_type>::~nullable()
     {
         clear();
-        if (m_value)
-            m_value->~value_type();
     }
 
     template <typename value_type>
@@ -151,13 +149,13 @@ namespace data
 
     template <typename value_type>
     nullable<value_type>::nullable(nullable<value_type> const& another)
-        : m_value(new(m_buffer) value_type(*another))
+        : m_value(another.is_null() ? null : new(m_buffer) value_type(*another))
     {
     }
 
     template <typename value_type>
     nullable<value_type>::nullable(nullable<value_type>&& temporary)
-        : m_value(new(m_buffer) value_type(std::move(*temporary)))
+        : m_value(temporary.is_null() ? null : new(m_buffer) value_type(std::move(*temporary)))
     {
     }
 
