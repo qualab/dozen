@@ -164,6 +164,10 @@ copy "$(icu_52_1)\bin64\icudt52.dll" "$(OutDir)"</Command>
       <AdditionalLibraryDirectories>$(OutDir);$(boost_1_55)/stage64/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dozen.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(icu_52_1)\bin64\icuuc52.dll" "$(OutDir)"
+copy "$(icu_52_1)\bin64\icudt52.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

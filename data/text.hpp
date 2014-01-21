@@ -69,6 +69,45 @@ namespace data
         /// Operator gets symbol specified by its index in the text
         int operator [] (int index) const;
 
+        class symbol_ref;
+
+        symbol_ref operator [] (int index);
+
+        text& operator += (text another);
+        text& operator *= (int count);
+
+        friend text operator + (text first, text second);
+        friend text operator * (text source, int count);
+        friend text operator * (int count, text source);
+
+        text get_substring(int start, int end) const;
+
+        class iterator;
+        class const_iterator;
+        class reverse_iterator;
+        class const_reverse_iterator;
+
+        iterator begin();
+        iterator end();
+
+        const_iterator begin() const;
+        const_iterator end() const;
+
+        const_iterator cbegin() const;
+        const_iterator cend() const;
+
+        reverse_iterator rbegin();
+        reverse_iterator rend();
+
+        const_reverse_iterator rbegin() const;
+        const_reverse_iterator rend() const;
+
+        const_reverse_iterator crbegin() const;
+        const_reverse_iterator crend() const;
+
+        iterator find(text substring);
+        const_iterator find(text substring) const;
+
     private:
         /// Forward declaration of implementation class in text.cpp file
         class impl;

@@ -15,6 +15,11 @@ BOOST_AUTO_TEST_SUITE(test_dozen)
             data::text last = "Керимов";
             BOOST_CHECK_EQUAL(last.get_byte_string(), "Керимов");
             BOOST_CHECK(last.get_wide_string() == L"Керимов");
+
+            data::text second("\x80\xad\xa4\xe0\xa5\xa5\xa2\xa8\xe7", "cp866");
+            BOOST_CHECK(second.get_wide_string() == L"Андреевич");
+            BOOST_CHECK_EQUAL(second.get_byte_string("cp1251"), "\xc0\xed\xe4\xf0\xe5\xe5\xe2\xe8\xf7");
+            BOOST_CHECK(second.get_wide_string() == L"Андреевич");
         }
 
     BOOST_AUTO_TEST_SUITE_END() // test_text

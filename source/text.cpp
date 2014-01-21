@@ -73,6 +73,12 @@ namespace data
                         : nullable<typename string_of<char_type>::type>(null);
     }
 
+    template <typename char_type>
+    char_type const* nullable_to_ptr(nullable<typename string_of<char_type>::type> const& argument)
+    {
+        return argument.is_null() ? null : argument->c_str();
+    }
+
     text::impl::impl()
     {
     }
@@ -154,13 +160,17 @@ namespace data
         if (m_byte_string.is_null() || m_encoding != ptr_to_nullable(encoding))
         {
             m_encoding = ptr_to_nullable(encoding);
-            m_byte_string = std::string();
-            if (m_unicode_string.is_not_null() || m_wide_string.is_not_null())
+            if (m_unicode_string.is_null() && m_wide_string.is_null())
+            {
+                m_byte_string = std::string();
+            }
+            else
             {
                 ensure_unicode_string_exists();
-                m_byte_string->resize(4 * m_unicode_string->length());
-                int len = m_unicode_string->extract(0, get_length(), &m_byte_string->at(0));
-                m_byte_string->resize(len);
+                char const* encoding_ptr = nullable_to_ptr<char>(m_encoding);
+                m_byte_string = std::string(4 * m_unicode_string->length(), '\0');
+                int length = m_unicode_string->extract(0, m_unicode_string->length(), &m_byte_string->at(0), encoding_ptr);
+                m_byte_string->resize(length);
             }
         }
     }

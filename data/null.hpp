@@ -246,10 +246,8 @@ namespace data
     {
         if (m_value)
         {
-            value_type* temporary = m_value;
+            m_value->~value_type();
             m_value = null;
-            if (temporary)
-                temporary->~value_type();
         }
     }
 
