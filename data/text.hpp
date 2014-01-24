@@ -18,6 +18,9 @@ namespace data
         /// Trevial destructor inherited from object
         virtual ~text() override;
 
+        /// Clone text data to a new text object
+        virtual std::unique_ptr<object> clone() const override;
+
         /// Create text object by wide string
         text(wchar_t const* wide_string);
 
@@ -121,16 +124,16 @@ namespace data
         int get_code() const;
 
         /// Get this symbol as wide symbol (wchar_t)
-        wchar_t get_as_wchar_t() const;
+        wchar_t get_as_wide_char() const;
 
-        /// Get this symbol as ANSI character (char) using specified encoding
-        char get_as_char(std::string const& encoding) const;
+        /// Get this symbol as ANSI symbol (char) using specified encoding
+        char get_as_byte_char(std::string const& encoding) const;
 
-        /// Get this symbol as ANSI character (char) using specified encoding
-        char get_as_char(char const* encoding) const;
+        /// Get this symbol as ANSI symbol (char) using specified encoding
+        char get_as_byte_char(char const* encoding) const;
 
-        /// Get this symbol as ANSI character (char) using defult encoding
-        char get_as_char() const;
+        /// Get this symbol as ANSI symbol (char) using defult encoding
+        char get_as_byte_char() const;
 
         /// Get this symbol as the text object which contains single symbol
         text get_as_text() const;
@@ -154,16 +157,16 @@ namespace data
         void set_code(int code);
 
         /// Set symbol as wide character (wchar_t)
-        void set_as_wchar_t(wchar_t code);
+        void set_as_wide_char(wchar_t code);
 
         /// Set symbol as ANSI character using specified encoding
-        void set_as_char(char code, std::string const& encoding);
+        void set_as_byte_char(char code, std::string const& encoding);
 
         /// Set symbol as ANSI character using specified encoding
-        void set_as_char(char code, char const* encoding);
+        void set_as_byte_char(char code, char const* encoding);
 
         /// Set symbol as ANSI character using default encoding
-        void set_as_char(char code);
+        void set_as_byte_char(char code);
 
         /// Set symbol by single symbol of text object
         void set_as_text(text const& single);

@@ -1,63 +1,33 @@
 ﻿/// @author Владимир Керимов
 
 #include <data/text.hpp>
-#include <data/null.hpp>
-
-#if defined(DOZEN_USES_ICU)
-#include <unicode/unistr.h>
-#elif defined(DOZEN_USES_ICONV)
-#include <iconv.h>
-#else
-#error Choose Unicode encoder: DOZEN_USES_ICU to use libicu or DOZEN_USES_ICONV to use libiconv
-#endif
-
-#ifdef _MSC_VER
-#define DOZEN_WCHAR_SIZE 2
-#endif
-
-#if defined(DOZEN_USES_ICU) && DOZEN_WCHAR_SIZE > 1
-#define DOZEN_NEED_UNICODE_STRING
-#endif
 
 namespace data
 {
-    class text::impl
+    class text::symbol_ref::impl
     {
     public:
-        impl();
+        impl(text& owner, int index);
 
-        impl(wchar_t const* wide_string);
-        impl(char const* byte_string);
-        impl(char const* byte_string, char const* encoding);
+        text const& get_owner() const;
+        text& get_owner();
+        int get_index() const;
 
-        std::wstring const& get_wide_string_ref() const;
-        std::string const& get_byte_string_ref(char const* encoding) const;
-        std::string const& get_encoding_string_ref() const;
+        void set_code(int code);
+        int get_code() const;
 
-#ifdef DOZEN_NEED_UNICODE_STRING
-        icu::UnicodeString const& get_unicode_string_ref() const;
-#endif
+        void set_as_wide_char(wchar_t code);
+        wchar_t get_as_wide_char() const;
 
-        int get_length() const;
-        int get_symbol_at(int index) const;
+        void set_as_byte_char(char code, char const* encoding);
+        char get_as_byte_char(char const* encoding) const;
+
+        void set_as_text(text single);
+        text get_as_text() const;
 
     private:
-        mutable nullable<std::string> m_byte_string;
-        mutable nullable<std::string> m_encoding;
-
-        void ensure_byte_string_match(char const* encoding) const;
-
-#if DOZEN_WCHAR_SIZE > 1
-        mutable nullable<std::wstring> m_wide_string;
-
-        void ensure_wide_string_exists() const;
-#endif
-
-#ifdef DOZEN_NEED_UNICODE_STRING
-        mutable nullable<icu::UnicodeString> m_unicode_string;
-
-        void ensure_unicode_string_exists() const;
-#endif
+        text& m_owner;
+        int m_index;
     };
 
     template <typename char_type>
@@ -237,6 +207,11 @@ namespace data
     {
     }
 
+    std::unique_ptr<object> text::clone() const
+    {
+        return std::unique_ptr<object>(new text(*this));
+    }
+
     text::text(wchar_t const* wide_string)
         : m_impl(new impl(wide_string))
     {
@@ -320,5 +295,72 @@ namespace data
     int text::operator [] (int index) const
     {
         return m_impl->get_symbol_at(index);
+    }
+
+/// text::symbol_ref::impl -----------------------------------------------------
+
+    text::symbol_ref::impl::impl(text& owner, int index)
+        : m_owner(owner), m_index(index)
+    {
+    }
+
+    text const& text::symbol_ref::impl::get_owner() const
+    {
+        return m_owner;
+    }
+
+    text& text::symbol_ref::impl::get_owner()
+    {
+        return m_owner;
+    }
+
+    int text::symbol_ref::impl::get_index() const
+    {
+        return m_index;
+    }
+
+    void text::symbol_ref::impl::set_code(int code)
+    {
+    }
+
+    int text::symbol_ref::impl::get_code() const
+    {
+        return m_owner.get_symbol_at(m_index);
+    }
+
+    void text::symbol_ref::impl::set_as_wide_char(wchar_t code)
+    {
+    }
+
+    wchar_t text::symbol_ref::impl::get_as_wide_char() const
+    {
+        int code = m_owner.get_symbol_at(m_index);
+        if (code > std::numeric_limits<wchar_t>::max())
+            DOZEN_THROW(out_of_range, "Code of symbol is out of range of the wide character type");
+        return static_cast<wchar_t>(code);
+    }
+
+    void text::symbol_ref::impl::set_as_byte_char(char code, char const* encoding)
+    {
+    }
+
+    char text::symbol_ref::impl::get_as_byte_char(char const* encoding) const
+    {
+    }
+
+    void text::symbol_ref::impl::set_as_text(text single)
+    {
+    }
+
+    text text::symbol_ref::impl::get_as_text() const
+    {
+        return text(); // TODO: text from symbol
+    }
+
+/// text::symbol_ref -----------------------------------------------------------
+
+    text::symbol_ref::symbol_ref(text& owner, int index)
+        : m_impl(new impl(owner, index))
+    {
     }
 }

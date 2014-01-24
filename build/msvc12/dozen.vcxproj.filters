@@ -7,6 +7,9 @@
     <Filter Include="source">
       <UniqueIdentifier>{6f43f0a1-fa9f-44f6-b44e-7f7240fd67ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\impl">
+      <UniqueIdentifier>{c872bbd0-d415-4ec8-a9ed-617d7cab3ea0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\data\lazy.hpp">
@@ -48,6 +51,15 @@
     <ClInclude Include="..\..\data\decimal.hpp">
       <Filter>data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\impl\exception_impl.hpp">
+      <Filter>source\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\impl\text_impl.hpp">
+      <Filter>source\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\impl\value_impl.hpp">
+      <Filter>source\impl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\value.cpp">
@@ -61,6 +73,15 @@
     </ClCompile>
     <ClCompile Include="..\..\source\text.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\impl\exception_impl.cpp">
+      <Filter>source\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\impl\text_impl.cpp">
+      <Filter>source\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\impl\value_impl.cpp">
+      <Filter>source\impl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

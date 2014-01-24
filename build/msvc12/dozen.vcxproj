@@ -32,9 +32,15 @@
     <ClInclude Include="..\..\data\exception.hpp" />
     <ClInclude Include="..\..\data\unit.hpp" />
     <ClInclude Include="..\..\data\value.hpp" />
+    <ClInclude Include="..\..\source\impl\exception_impl.hpp" />
+    <ClInclude Include="..\..\source\impl\text_impl.hpp" />
+    <ClInclude Include="..\..\source\impl\value_impl.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\exception.cpp" />
+    <ClCompile Include="..\..\source\impl\exception_impl.cpp" />
+    <ClCompile Include="..\..\source\impl\text_impl.cpp" />
+    <ClCompile Include="..\..\source\impl\value_impl.cpp" />
     <ClCompile Include="..\..\source\object.cpp" />
     <ClCompile Include="..\..\source\text.cpp" />
     <ClCompile Include="..\..\source\value.cpp" />

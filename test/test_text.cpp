@@ -20,6 +20,7 @@ BOOST_AUTO_TEST_SUITE(test_dozen)
             BOOST_CHECK(second.get_wide_string() == L"Андреевич");
             BOOST_CHECK_EQUAL(second.get_byte_string("cp1251"), "\xc0\xed\xe4\xf0\xe5\xe5\xe2\xe8\xf7");
             BOOST_CHECK(second.get_wide_string() == L"Андреевич");
+            BOOST_CHECK(second.get_byte_string() == "Андреевич");
         }
 
     BOOST_AUTO_TEST_SUITE_END() // test_text
