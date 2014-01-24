@@ -39,6 +39,15 @@
     <ClInclude Include="..\..\data\unit.hpp">
       <Filter>data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\data\array.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\data\hash.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\data\decimal.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\value.cpp">
