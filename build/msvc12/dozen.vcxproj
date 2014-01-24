@@ -24,8 +24,10 @@
     <ClInclude Include="..\..\data\null.hpp" />
     <ClInclude Include="..\..\data\object.hpp" />
     <ClInclude Include="..\..\data\scalar.hpp" />
+    <ClInclude Include="..\..\data\set.hpp" />
     <ClInclude Include="..\..\data\text.hpp" />
     <ClInclude Include="..\..\data\exception.hpp" />
+    <ClInclude Include="..\..\data\unit.hpp" />
     <ClInclude Include="..\..\data\value.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -33,6 +33,12 @@
     <ClInclude Include="..\..\data\api.hpp">
       <Filter>data</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\data\set.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\data\unit.hpp">
+      <Filter>data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\value.cpp">
