@@ -8,6 +8,9 @@
 
 namespace data
 {
+    class symbol;
+    class symbol_ref;
+
     /// Continer for text in Unicode or in ANSI string with lazy implementation and copy-on-write
     class DOZEN_API text : public object
     {
@@ -67,15 +70,12 @@ namespace data
         int get_length() const;
 
         /// Get symbol specified by its index in the text
-        int get_symbol_at(int index) const;
+        symbol get_symbol_at(int index) const;
 
         /// Operator gets symbol specified by its index in the text
-        int operator [] (int index) const;
-
-        class symbol_ref;
+        symbol operator [] (int index) const;
 
         symbol_ref get_symbol_at(int index);
-        symbol_ref get_symbol_ref_at(int index);
 
         symbol_ref operator [] (int index);
 
@@ -95,14 +95,6 @@ namespace data
         template <class function>
         void for_each_symbol(function const& functor) const;
 
-        class iterator;
-
-        iterator begin();
-        iterator end();
-
-        iterator begin() const;
-        iterator end() const;
-
     private:
         /// Forward declaration of implementation class in text.cpp file
         class impl;
@@ -111,17 +103,17 @@ namespace data
         lazy<impl> m_impl;
     };
 
-//  ------------------------------------------------------------------------------
+//  symbol_base ----------------------------------------------------------------
 
-    /// Reference to a symbol in text
-    class DOZEN_API text::symbol_ref
+    /// Base class for symbol and symbol_ref classes
+    class DOZEN_API symbol_base : public object
     {
     public:
-        /// Initialize symbol reference by reference to a text and index of this symbol
-        symbol_ref(text& owner, int index);
-
         /// Get code of this symbol in Unicode
-        int get_code() const;
+        virtual int get_code() const = 0;
+
+        /// Set symbol as code of Unicode
+        virtual void set_code(int code) = 0;
 
         /// Get this symbol as wide symbol (wchar_t)
         wchar_t get_as_wide_char() const;
@@ -153,9 +145,6 @@ namespace data
         /// Represent symbol as text object
         operator text() const;
 
-        /// Set symbol as code of Unicode
-        void set_code(int code);
-
         /// Set symbol as wide character (wchar_t)
         void set_as_wide_char(wchar_t code);
 
@@ -169,19 +158,72 @@ namespace data
         void set_as_byte_char(char code);
 
         /// Set symbol by single symbol of text object
-        void set_as_text(text const& single);
+        void set_as_text(text single);
 
         /// Initialize symbol by code of Unicode
-        symbol_ref operator = (int code);
+        symbol_base& operator = (int code);
 
         /// Initialize symbol by wide character (wchar_t)
-        symbol_ref operator = (wchar_t code);
+        symbol_base& operator = (wchar_t code);
 
         /// Initialize symbol by ANSI charactoer (char)
-        symbol_ref operator = (char code);
+        symbol_base& operator = (char code);
 
         /// Initialize symbol as single symbol of text object
-        symbol_ref operator = (text single);
+        symbol_base& operator = (text single);
+    };
+
+//  symbol ---------------------------------------------------------------------
+
+    /// Symbol of text
+    class DOZEN_API symbol : public symbol_base
+    {
+    public:
+        typedef symbol_base base;
+
+        symbol();
+
+        virtual ~symbol();
+
+        virtual std::unique_ptr<object> clone() const override;
+
+        virtual int get_code() const override;
+
+        virtual void set_code(int code) override;
+
+        explicit symbol(int code);
+
+        explicit symbol(wchar_t code);
+
+        symbol(char code, char const* encoding);
+
+        symbol(char code, std::string const& encoding);
+
+        explicit symbol(char code);
+
+    private:
+        class impl;
+
+        lazy<impl> m_impl;
+    };
+
+//  symbol_ref -----------------------------------------------------------------
+
+    /// Reference to a symbol in the text
+    class DOZEN_API symbol_ref : public symbol_base
+    {
+    public:
+        typedef symbol_base base;
+
+        symbol_ref(text source, int index);
+
+        virtual ~symbol_ref() override;
+
+        virtual std::unique_ptr<object> clone() const override;
+
+        virtual int get_code() const override;
+
+        virtual void set_code(int code) override;
 
     private:
         class impl;

@@ -39,6 +39,9 @@ namespace data
         /// Get reference count to the data of T.
         int ref_count() const;
 
+        /// Create new lazy-object references the same impl-object
+        lazy ref_same() const;
+
         /// Check are two lazy implementations point to the same implementation object
         bool is_same_as(const lazy& another) const;
 
@@ -122,6 +125,12 @@ namespace data
         return m_shared_impl.use_count();
     }
 
+    template <class impl>
+    lazy<impl> lazy<impl>::ref_same() const
+    {
+        return lazy<impl>(*this);
+    }
+    
     template <class impl>
     bool lazy<impl>::is_same_as(const lazy<impl>& another) const
     {

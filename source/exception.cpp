@@ -2,47 +2,10 @@
 
 #include <data/exception.hpp>
 #include <data/text.hpp>
+#include "impl/exception_impl.hpp"
 
 namespace data
 {
-    class exception::impl
-    {
-    public:
-        impl()
-            : m_message(), m_file(), m_line()
-        {
-        }
-
-        impl(text message)
-            : m_message(message), m_file(), m_line()
-        {
-        }
-
-        impl(text message, text file, int line)
-            : m_message(message), m_file(file), m_line(line)
-        {
-        }
-
-        text get_message() const
-        {
-            return m_message;
-        }
-
-        text get_file() const
-        {
-            return m_file;
-        }
-
-        int get_line() const
-        {
-            return m_line;
-        }
-
-    private:
-        text m_message;
-        text m_file;
-        int  m_line;
-    };
 
 //  exception --------------------------------------------------------------------
 

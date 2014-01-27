@@ -39,7 +39,8 @@ namespace data
 #endif
 
         int get_length() const;
-        int get_symbol_at(int index) const;
+        symbol get_symbol_at(int index);
+        symbol get_symbol_at(int index) const;
 
     private:
         mutable nullable<std::string> m_byte_string;
@@ -59,4 +60,69 @@ namespace data
         void ensure_unicode_string_exists() const;
 #endif
     };
+
+    class symbol::impl
+    {
+    public:
+        impl();
+        explicit impl(int code);
+        explicit impl(wchar_t code);
+        explicit impl(char code);
+        impl(char code, char const* encoding);
+        explicit impl(text single);
+        impl(text& owner, int index);
+
+        void set_code(int code);
+        int get_code() const;
+
+        void set_as_wide_char(wchar_t code);
+        wchar_t get_as_wide_char() const;
+
+        void set_as_byte_char(char code, char const* encoding);
+        char get_as_byte_char(char const* encoding) const;
+
+        void set_as_text(text single);
+        text get_as_text() const;
+
+    private:
+        union code_type
+        {
+            int     of_unicode;
+            wchar_t of_ucs;
+            char    of_ascii;
+        } m_code;
+    };
+
+    class symbol_ref::impl
+    {
+    public:
+        impl();
+        impl(text source, int index);
+
+        void set_code(int code);
+        int get_code() const;
+
+    private:
+        text m_source;
+        int m_index;
+    };
+
+    template <typename char_type>
+    struct string_of;
+
+    template<> struct string_of<wchar_t> { typedef std::wstring type; };
+    template<> struct string_of<char>    { typedef std::string  type; };
+
+    template <typename char_type>
+    nullable<typename string_of<char_type>::type> ptr_to_nullable(char_type const* argument)
+    {
+        return argument ? nullable<typename string_of<char_type>::type>(argument)
+            : nullable<typename string_of<char_type>::type>(null);
+    }
+
+    template <typename char_type>
+    char_type const* nullable_to_ptr(nullable<typename string_of<char_type>::type> const& argument)
+    {
+        return argument.is_null() ? null : argument->c_str();
+    }
 }

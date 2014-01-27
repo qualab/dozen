@@ -17,7 +17,10 @@ namespace data
         value();
 
         /// Trivial destructor of data object
-        virtual ~value();
+        virtual ~value() override;
+
+        /// Clone value object to the new object with same value
+        virtual std::unique_ptr<object> clone() const override;
 
         /// Initialize value as null, same as default constructor
         value(null_type);
