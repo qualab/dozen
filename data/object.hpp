@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <data/api.hpp>
+#include <data/api>
 #include <memory>
 
 namespace data

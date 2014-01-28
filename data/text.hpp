@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include <data/object.hpp>
-#include <data/lazy.hpp>
+#include <data/object>
+#include <data/lazy>
 #include <string>
 
 namespace data

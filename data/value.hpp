@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <data/null.hpp>
+#include <data/null>
 #include <type_traits>
 
 namespace data

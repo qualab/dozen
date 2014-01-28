@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <data/text.hpp>
+#include <data/text>
 #include <exception>
 
 #define DOZEN_THROW(exception, message) throw exception(message, __FILE__, __LINE__)

@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include <data/object.hpp>
-#include <data/scalar.hpp>
-#include <data/exception.hpp>
+#include <data/object>
+#include <data/scalar>
+#include <data/exception>
 #include <utility>
 
 namespace data

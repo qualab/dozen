@@ -1,6 +1,6 @@
 ﻿/// @author Владимир Керимов
 
-#include <data/lazy.hpp>
+#include <data/lazy>
 #include <boost/test/unit_test.hpp>
 #include <string>
 
