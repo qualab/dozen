@@ -191,27 +191,34 @@ namespace data
 //  symbol::impl ---------------------------------------------------------------
 
     symbol::impl::impl()
-        : m_code()
+        : m_code(0)
     {
     }
 
-    symbol::impl::impl(int code)
-        : m_code(code)
+    void symbol::impl::set_code(int code)
     {
+        m_code = code;
     }
 
-    symbol::impl::impl(wchar_t code)
+    int symbol::impl::get_code() const
     {
-        set_as_wide_char(code);
+        return m_code;
     }
-
-    symbol::impl::impl(char code)
-    {
-        set_as_byte_char(code, null);
-    }
-
-
 
 //  symbol_ref::impl -----------------------------------------------------------
 
+    symbol_ref::impl::impl(text::impl& source, int index)
+        : m_source(source), m_index(index)
+    {
+    }
+
+    void symbol_ref::impl::set_code(int code)
+    {
+        m_source[m_index].set_code(code); /// TODO: remove recursion
+    }
+
+    int symbol_ref::impl::get_code() const
+    {
+        return m_source[m_index].get_code(); /// TODO: remove recursion
+    }
 }

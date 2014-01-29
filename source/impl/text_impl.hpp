@@ -67,24 +67,9 @@ namespace data
     {
     public:
         impl();
-        explicit impl(int code);
-        explicit impl(wchar_t code);
-        explicit impl(char code);
-        impl(char code, char const* encoding);
-        explicit impl(text single);
-        impl(text& owner, int index);
 
         void set_code(int code);
         int get_code() const;
-
-        void set_as_wide_char(wchar_t code);
-        wchar_t get_as_wide_char() const;
-
-        void set_as_byte_char(char code, char const* encoding);
-        char get_as_byte_char(char const* encoding) const;
-
-        void set_as_text(text single);
-        text get_as_text() const;
 
     private:
         int m_code;
@@ -100,7 +85,7 @@ namespace data
         int get_code() const;
 
     private:
-        text::impl* m_source;
+        text::impl& m_source;
         int m_index;
     };
 
