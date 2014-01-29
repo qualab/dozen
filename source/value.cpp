@@ -16,6 +16,11 @@ namespace data
     {
     }
 
+    std::unique_ptr<object> value::clone() const
+    {
+        return std::unique_ptr<object>(new value(*this));
+    }
+
     value::value(null_type)
     {
     }

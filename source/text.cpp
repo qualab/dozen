@@ -106,7 +106,17 @@ namespace data
         return m_impl->get_symbol_at(index);
     }
 
-/// symbol_base ----------------------------------------------------------------
+    symbol_ref text::get_symbol_at(int index)
+    {
+        return m_impl->get_symbol_at(index);
+    }
+
+    symbol_ref text::operator [] (int index)
+    {
+        return m_impl->get_symbol_at(index);
+    }
+
+    /// symbol_base ----------------------------------------------------------------
 
     wchar_t symbol_base::get_as_wide_char() const
     {

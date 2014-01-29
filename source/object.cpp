@@ -5,12 +5,7 @@
 
 namespace data
 {
-    /*object::~object()
+    object::~object()
     {
     }
-
-    std::unique_ptr<object> object::clone() const
-    {
-        return std::unique_ptr<object>(new object(*this));
-    }*/
 }

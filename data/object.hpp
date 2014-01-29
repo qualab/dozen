@@ -10,7 +10,7 @@ namespace data
     class DOZEN_API object
     {
     public:
-        virtual ~object() = 0;
+        virtual ~object();
 
         virtual std::unique_ptr<object> clone() const = 0;
     };

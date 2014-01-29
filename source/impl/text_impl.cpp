@@ -4,6 +4,9 @@
 
 namespace data
 {
+
+//  text::impl -----------------------------------------------------------------
+
     text::impl::impl()
     {
     }
@@ -151,5 +154,64 @@ namespace data
                 return symbol(m_unicode_string->char32At(get_length() - index));
         }
     }
+
+    int text::impl::normalize_index(int index) const
+    {
+        if (index >= 0)
+        {
+            if (index >= get_length())
+                DOZEN_THROW(out_of_range, "Index of symbol in text is positive and out of range [0..length).");
+            else
+                return index;
+        }
+        else
+        {
+            int length = get_length();
+            if (index < length)
+                DOZEN_THROW(out_of_range, "Index of symbol in text is negatitive and out of range [-length..0).");
+            else
+                return length - index;
+        }
+    }
+
+    symbol text::impl::get_symbol_at(int index) const
+    {
+        index = normalize_index(index);
+        ensure_unicode_string_exists();
+        return symbol(m_unicode_string->char32At(index));
+    }
+
+    symbol_ref text::impl::get_symbol_at(int index)
+    {
+        index = normalize_index(index);
+        ensure_unicode_string_exists();
+        return symbol_ref(*this, index);
+    }
+
+//  symbol::impl ---------------------------------------------------------------
+
+    symbol::impl::impl()
+        : m_code()
+    {
+    }
+
+    symbol::impl::impl(int code)
+        : m_code(code)
+    {
+    }
+
+    symbol::impl::impl(wchar_t code)
+    {
+        set_as_wide_char(code);
+    }
+
+    symbol::impl::impl(char code)
+    {
+        set_as_byte_char(code, null);
+    }
+
+
+
+//  symbol_ref::impl -----------------------------------------------------------
 
 }

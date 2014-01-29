@@ -101,6 +101,9 @@ namespace data
 
         /// Lazy initialization and copy-on-write model of the implementation object
         lazy<impl> m_impl;
+
+        // friend symbol_ref to get access to text::impl
+        friend class symbol_ref;
     };
 
 //  symbol_base ----------------------------------------------------------------

@@ -39,8 +39,8 @@ namespace data
 #endif
 
         int get_length() const;
-        symbol get_symbol_at(int index);
         symbol get_symbol_at(int index) const;
+        symbol_ref get_symbol_at(int index);
 
     private:
         mutable nullable<std::string> m_byte_string;
@@ -59,6 +59,8 @@ namespace data
 
         void ensure_unicode_string_exists() const;
 #endif
+
+        int normalize_index(int index) const;
     };
 
     class symbol::impl
@@ -85,25 +87,20 @@ namespace data
         text get_as_text() const;
 
     private:
-        union code_type
-        {
-            int     of_unicode;
-            wchar_t of_ucs;
-            char    of_ascii;
-        } m_code;
+        int m_code;
     };
 
     class symbol_ref::impl
     {
     public:
-        impl();
-        impl(text source, int index);
+        //impl();
+        impl(text::impl& source, int index);
 
         void set_code(int code);
         int get_code() const;
 
     private:
-        text m_source;
+        text::impl* m_source;
         int m_index;
     };
 
